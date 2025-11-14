@@ -8,7 +8,6 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&display=swap" rel="stylesheet">
     <style>
-        /* Your existing CSS styles here */
         body {
             background: #0d0d0d;
             color: #0ff;
@@ -164,6 +163,56 @@
             border-radius: 10px;
             margin-bottom: 15px;
         }
+        .network-toggle {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 10;
+        }
+        .network-toggle-btn {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        .network-toggle-btn.active {
+            background-color: #0ff;
+            color: #0d0d0d;
+        }
+        .network-toggle-btn.testnet.active {
+            background-color: #ff9900;
+            color: #000;
+        }
+        .network-toggle-btn.mainnet.active {
+            background-color: #00cc66;
+            color: #000;
+        }
+        .network-toggle-btn.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .nft-creator {
+            background: rgba(0,255,255,0.1);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            border: 1px solid rgba(0,255,255,0.3);
+        }
+        .network-badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(0,255,255,0.2);
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+        }
+        .testnet-badge {
+            background: rgba(255,153,0,0.2);
+        }
+        .mainnet-badge {
+            background: rgba(0,204,102,0.2);
+        }
     </style>
 </head>
 <body>
@@ -177,6 +226,7 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item"><a class="nav-link" href="#nft">NFTs</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#products">Products</a></li>
                     <li class="nav-item"><a class="nav-link" href="#dao">DAO</a></li>
                     <li class="nav-item"><a class="nav-link" href="#crypto">Crypto</a></li>
                     <li class="nav-item"><a class="nav-link" href="#defi">DeFi</a></li>
@@ -207,10 +257,13 @@
                             <li><hr class="dropdown-divider"></li>
                             <li><h6 class="dropdown-header">Select Wallet</h6></li>
                             <li><div class="wallet-option" data-wallet="metamask"><i class="bi bi-wallet2"></i> MetaMask</div></li>
+                            <li><div class="wallet-option" data-wallet="rabby"><i class="bi bi-shield-check"></i> Rabby Wallet</div></li>
                             <li><div class="wallet-option" data-wallet="walletconnect"><i class="bi bi-wifi"></i> WalletConnect</div></li>
                             <li><div class="wallet-option" data-wallet="coinbase"><i class="bi bi-coin"></i> Coinbase Wallet</div></li>
                             <li><div class="wallet-option" data-wallet="trustwallet"><i class="bi bi-shield-check"></i> Trust Wallet</div></li>
                             <li><div class="wallet-option" data-wallet="brave"><i class="bi bi-shield-fill"></i> Brave Wallet</div></li>
+                            <li><div class="wallet-option" data-wallet="bybit"><i class="bi bi-currency-exchange"></i> Bybit Wallet</div></li>
+                            <li><div class="wallet-option" data-wallet="bitget"><i class="bi bi-currency-bitcoin"></i> Bitget Wallet</div></li>
                         </ul>
                     </li>
                     <li class="nav-item ms-3">
@@ -223,10 +276,60 @@
         </div>
     </nav>
 
+    <!-- Network Toggle -->
+    <div class="network-toggle">
+        <button class="network-toggle-btn testnet active" data-network="testnet">Testnet</button>
+        <button class="network-toggle-btn mainnet" data-network="mainnet">Mainnet</button>
+    </div>
+
     <!-- NFT Section -->
     <section id="nft" class="glass">
         <div class="container">
             <h2 class="text-center mb-4"><i class="bi bi-image"></i> NFT Marketplace</h2>
+            
+            <!-- NFT Creator -->
+            <div class="nft-creator glass neon-border">
+                <h3>Create New NFT</h3>
+                <form id="createNFTForm">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">NFT Name</label>
+                                <input type="text" class="form-control" id="nftName" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Description</label>
+                                <input type="text" class="form-control" id="nftDescription" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Price (ETH)</label>
+                                <input type="number" step="0.01" class="form-control" id="nftPrice" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Network</label>
+                                <select class="form-select" id="nftNetwork">
+                                    <option value="testnet" selected>Testnet</option>
+                                    <option value="mainnet">Mainnet</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Upload Image</label>
+                        <input class="form-control" type="file" id="nftImage" accept="image/*" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Create NFT</button>
+                </form>
+            </div>
+
             <div class="row" id="nftContainer">
                 <!-- NFT items will be dynamically loaded here -->
             </div>
@@ -275,7 +378,8 @@
             
             <!-- Admin Navigation -->
             <ul class="nav nav-pills mb-4 justify-content-center">
-                <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#userManagement">User Management</button></li>
+                <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#networkControl">Network Control</button></li>
+                <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#userManagement">User Management</button></li>
                 <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#contentModeration">Content Moderation</button></li>
                 <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#adminManagement">Admin Management</button></li>
                 <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#passwordChange">Change Password</button></li>
@@ -283,8 +387,67 @@
 
             <!-- Admin Tabs Content -->
             <div class="tab-content">
+                <!-- Network Control -->
+                <div class="tab-pane fade show active" id="networkControl">
+                    <div class="card neon-border mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title">Network Status</h5>
+                            <div class="d-flex justify-content-center mb-4">
+                                <div class="form-group">
+                                    <label for="networkToggle" class="form-label">Current Network Status</label>
+                                    <div class="d-flex align-items-center">
+                                        <span class="me-3">Testnet:</span>
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="testnetToggle" checked>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex align-items-center mt-2">
+                                        <span class="me-3">Mainnet:</span>
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="mainnetToggle">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <h5 class="card-title mt-4">Network Configuration</h5>
+                            <div class="table-responsive">
+                                <table class="table table-dark">
+                                    <thead>
+                                        <tr>
+                                            <th>Network</th>
+                                            <th>RPC URL</th>
+                                            <th>Explorer</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>Testnet</td>
+                                            <td>https://rpc.testnet.eth.example</td>
+                                            <td>https://testnet-explorer.eth.example</td>
+                                            <td><span class="badge bg-success">Active</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Mainnet</td>
+                                            <td>https://rpc.mainnet.eth.example</td>
+                                            <td>https://mainnet-explorer.eth.example</td>
+                                            <td><span class="badge bg-secondary">Inactive</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <div class="mt-4">
+                                <button class="btn btn-success me-2" id="activateTestnet">Activate Testnet</button>
+                                <button class="btn btn-primary" id="activateMainnet">Activate Mainnet</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- User Management -->
-                <div class="tab-pane fade show active" id="userManagement">
+                <div class="tab-pane fade" id="userManagement">
                     <div class="card neon-border mb-3">
                         <div class="card-body">
                             <h5 class="card-title">User Accounts</h5>
@@ -324,6 +487,7 @@
                                         <tr>
                                             <th>Item</th>
                                             <th>Category</th>
+                                            <th>Network</th>
                                             <th>Actions</th>
                                         </tr>
                                     </thead>
@@ -331,6 +495,7 @@
                                         <tr>
                                             <td>Cosmic Dreams #001</td>
                                             <td>NFT</td>
+                                            <td>Testnet</td>
                                             <td>
                                                 <button class="btn btn-sm btn-success">Approve</button>
                                                 <button class="btn btn-sm btn-danger">Reject</button>
@@ -379,7 +544,7 @@
                                     <tbody id="adminTableBody">
                                         <tr>
                                             <td>0x093a810238E5C65B5bC33FC11237992B5C84562c</td>
-                                            <td>sudo</td>
+                                            <td>Super Admin</td>
                                             <td>
                                                 <button class="btn btn-sm btn-warning">Reset Password</button>
                                                 <button class="btn btn-sm btn-danger">Remove</button>
@@ -440,14 +605,14 @@
     <script>
         // App state
         let appState = {
-            currentNetwork: 'mainnet', // Default to mainnet
+            currentNetwork: 'testnet', // Default to testnet
             connectedWallet: null,
             connectedAddress: null,
             isAdmin: false,
             adminCredentials: {},
             admins: {
                 "0x093a810238E5C65B5bC33FC11237992B5C84562c": {
-                    username: "sudo",
+                    username: "Super Admin",
                     password: "admin123"
                 }
             },
@@ -458,7 +623,8 @@
                     description: "A beautiful cosmic NFT from our exclusive collection",
                     image: "https://picsum.photos/seed/cosmic1/400/300.jpg",
                     price: "0.05",
-                    category: "NFT"
+                    category: "NFT",
+                    network: "testnet"
                 },
                 {
                     id: 2,
@@ -466,7 +632,8 @@
                     description: "Unique digital artwork from a renowned artist",
                     image: "https://picsum.photos/seed/art42/400/300.jpg",
                     price: "0.08",
-                    category: "NFT"
+                    category: "NFT",
+                    network: "testnet"
                 },
                 {
                     id: 3,
@@ -474,7 +641,8 @@
                     description: "A powerful sword for your gaming adventures",
                     image: "https://picsum.photos/seed/sword/400/300.jpg",
                     price: "0.12",
-                    category: "Gaming"
+                    category: "Gaming",
+                    network: "testnet"
                 },
                 {
                     id: 4,
@@ -482,7 +650,8 @@
                     description: "Exclusive beats from top producers",
                     image: "https://picsum.photos/seed/music/400/300.jpg",
                     price: "0.03",
-                    category: "Music"
+                    category: "Music",
+                    network: "testnet"
                 },
                 {
                     id: 5,
@@ -490,7 +659,28 @@
                     description: "Prime virtual real estate in the metaverse",
                     image: "https://picsum.photos/seed/land78/400/300.jpg",
                     price: "0.25",
-                    category: "Virtual Land"
+                    category: "Virtual Land",
+                    network: "testnet"
+                }
+            ],
+            mainnetProducts: [
+                {
+                    id: 6,
+                    name: "Premium Collection #001",
+                    description: "Exclusive NFT collection for mainnet users",
+                    image: "https://picsum.photos/seed/premium1/400/300.jpg",
+                    price: "1.0",
+                    category: "NFT",
+                    network: "mainnet"
+                },
+                {
+                    id: 7,
+                    name: "Luxury Virtual Estate",
+                    description: "High-end virtual property in the mainnet metaverse",
+                    image: "https://picsum.photos/seed/luxuryestate/400/300.jpg",
+                    price: "5.0",
+                    category: "Virtual Land",
+                    network: "mainnet"
                 }
             ]
         };
@@ -508,6 +698,9 @@
             
             // Set up event listeners
             setupEventListeners();
+            
+            // Initialize network toggle
+            initNetworkToggle();
         });
 
         // Load state from localStorage
@@ -515,12 +708,14 @@
             const savedState = localStorage.getItem('neonWeb3State');
             if (savedState) {
                 const parsedState = JSON.parse(savedState);
-                appState.currentNetwork = parsedState.currentNetwork || 'mainnet';
+                appState.currentNetwork = parsedState.currentNetwork || 'testnet';
                 appState.connectedWallet = parsedState.connectedWallet || null;
                 appState.connectedAddress = parsedState.connectedAddress || null;
                 appState.isAdmin = parsedState.isAdmin || false;
                 appState.adminCredentials = parsedState.adminCredentials || {};
                 appState.admins = parsedState.admins || appState.admins;
+                appState.testnetProducts = parsedState.testnetProducts || appState.testnetProducts;
+                appState.mainnetProducts = parsedState.mainnetProducts || appState.mainnetProducts;
             }
         }
 
@@ -532,7 +727,9 @@
                 connectedAddress: appState.connectedAddress,
                 isAdmin: appState.isAdmin,
                 adminCredentials: appState.adminCredentials,
-                admins: appState.admins
+                admins: appState.admins,
+                testnetProducts: appState.testnetProducts,
+                mainnetProducts: appState.mainnetProducts
             };
             localStorage.setItem('neonWeb3State', JSON.stringify(stateToSave));
         }
@@ -554,9 +751,13 @@
             nftContainer.innerHTML = '';
             productsContainer.innerHTML = '';
             
+            // Get products for current network
+            const allProducts = [...appState.testnetProducts, ...appState.mainnetProducts];
+            const currentNetworkProducts = allProducts.filter(product => product.network === appState.currentNetwork);
+            
             // Filter products by category
-            const nfts = appState.testnetProducts.filter(product => product.category === 'NFT');
-            const otherProducts = appState.testnetProducts.filter(product => product.category !== 'NFT');
+            const nfts = currentNetworkProducts.filter(product => product.category === 'NFT');
+            const otherProducts = currentNetworkProducts.filter(product => product.category !== 'NFT');
             
             // Load NFTs
             nfts.forEach(nft => {
@@ -578,12 +779,13 @@
             
             col.innerHTML = `
                 <div class="nft-card">
+                    <span class="network-badge ${nft.network === 'testnet' ? 'testnet-badge' : 'mainnet-badge'}">${nft.network === 'testnet' ? 'Testnet' : 'Mainnet'}</span>
                     <img src="${nft.image}" class="nft-image" alt="${nft.name}">
                     <h5>${nft.name}</h5>
                     <p>${nft.description}</p>
                     <div class="d-flex justify-content-between align-items-center">
                         <span>${nft.price} ETH</span>
-                        <button class="btn btn-primary hover-scale">Buy Now</button>
+                        <button class="btn btn-primary hover-scale buy-nft" data-id="${nft.id}" data-network="${nft.network}">Buy Now</button>
                     </div>
                 </div>
             `;
@@ -598,12 +800,13 @@
             
             col.innerHTML = `
                 <div class="product-card">
+                    <span class="network-badge ${product.network === 'testnet' ? 'testnet-badge' : 'mainnet-badge'}">${product.network === 'testnet' ? 'Testnet' : 'Mainnet'}</span>
                     <img src="${product.image}" class="product-image" alt="${product.name}">
                     <h5>${product.name}</h5>
                     <p>${product.description}</p>
                     <div class="d-flex justify-content-between align-items-center">
                         <span>${product.price} ETH</span>
-                        <button class="btn btn-primary hover-scale">Buy Now</button>
+                        <button class="btn btn-primary hover-scale buy-product" data-id="${product.id}" data-network="${product.network}">Buy Now</button>
                     </div>
                 </div>
             `;
@@ -620,6 +823,28 @@
                     updateNetworkIndicator();
                     saveState();
                     loadProducts(); // Reload products for the selected network
+                    
+                    // Update network toggle
+                    document.querySelector('.network-toggle-btn.testnet').classList.toggle('active', appState.currentNetwork === 'testnet');
+                    document.querySelector('.network-toggle-btn.mainnet').classList.toggle('active', appState.currentNetwork === 'mainnet');
+                });
+            });
+
+            // Network toggle buttons
+            document.querySelectorAll('.network-toggle-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const network = this.getAttribute('data-network');
+                    appState.currentNetwork = network;
+                    
+                    // Update UI
+                    document.querySelectorAll('.network-toggle-btn').forEach(btn => {
+                        btn.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                    
+                    updateNetworkIndicator();
+                    saveState();
+                    loadProducts();
                 });
             });
 
@@ -727,6 +952,101 @@
                 document.querySelector('.navbar-nav .nav-link[href="#admin"]')?.remove();
                 saveState();
             });
+
+            // Network control buttons
+            document.getElementById('activateTestnet').addEventListener('click', function() {
+                appState.currentNetwork = 'testnet';
+                document.getElementById('testnetToggle').checked = true;
+                document.getElementById('mainnetToggle').checked = false;
+                updateNetworkIndicator();
+                saveState();
+                loadProducts();
+                alert('Testnet activated!');
+            });
+
+            document.getElementById('activateMainnet').addEventListener('click', function() {
+                if (confirm('Are you sure you want to activate Mainnet? This will make the site live on the main Ethereum network.')) {
+                    appState.currentNetwork = 'mainnet';
+                    document.getElementById('testnetToggle').checked = false;
+                    document.getElementById('mainnetToggle').checked = true;
+                    updateNetworkIndicator();
+                    saveState();
+                    loadProducts();
+                    alert('Mainnet activated!');
+                }
+            });
+
+            // Create NFT form
+            document.getElementById('createNFTForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                if (!appState.connectedAddress) {
+                    alert('Please connect your wallet first');
+                    return;
+                }
+                
+                const name = document.getElementById('nftName').value;
+                const description = document.getElementById('nftDescription').value;
+                const price = document.getElementById('nftPrice').value;
+                const network = document.getElementById('nftNetwork').value;
+                const imageFile = document.getElementById('nftImage').files[0];
+                
+                if (!imageFile) {
+                    alert('Please select an image file');
+                    return;
+                }
+                
+                // In a real app, you would upload the image to IPFS or a storage service
+                // For this demo, we'll use a placeholder URL
+                const imageUrl = URL.createObjectURL(imageFile);
+                
+                // Create new NFT
+                const newNft = {
+                    id: Date.now(), // Unique ID
+                    name: name,
+                    description: description,
+                    image: imageUrl,
+                    price: price,
+                    category: 'NFT',
+                    network: network,
+                    owner: appState.connectedAddress
+                };
+                
+                // Add to appropriate network array
+                if (network === 'testnet') {
+                    appState.testnetProducts.push(newNft);
+                } else {
+                    appState.mainnetProducts.push(newNft);
+                }
+                
+                // Save state
+                saveState();
+                
+                // Reload products
+                loadProducts();
+                
+                // Reset form
+                this.reset();
+                
+                alert('NFT created successfully!');
+            });
+
+            // Buy NFT/Product buttons
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('buy-nft') || e.target.classList.contains('buy-product')) {
+                    if (!appState.connectedAddress) {
+                        alert('Please connect your wallet first');
+                        return;
+                    }
+                    
+                    const id = e.target.getAttribute('data-id');
+                    const network = e.target.getAttribute('data-network');
+                    
+                    alert(`Purchasing item #${id} on ${network} network. In a real application, this would trigger a transaction.`);
+                    
+                    // In a real app, you would initiate a transaction here
+                }
+            });
         }
 
         // Connect wallet function
@@ -741,6 +1061,16 @@
                             await provider.send("eth_requestAccounts", []);
                         } else {
                             alert('MetaMask is not installed. Please install it to continue.');
+                            return;
+                        }
+                        break;
+                        
+                    case 'rabby':
+                        if (window.ethereum && window.ethereum.isRabby) {
+                            provider = new ethers.providers.Web3Provider(window.ethereum);
+                            await provider.send("eth_requestAccounts", []);
+                        } else {
+                            alert('Rabby Wallet is not installed. Please install it to continue.');
                             return;
                         }
                         break;
@@ -778,6 +1108,26 @@
                             await provider.send("eth_requestAccounts", []);
                         } else {
                             alert('Brave Wallet is not available. Please use Brave browser or install the extension.');
+                            return;
+                        }
+                        break;
+                        
+                    case 'bybit':
+                        if (window.ethereum && window.ethereum.isBybit) {
+                            provider = new ethers.providers.Web3Provider(window.ethereum);
+                            await provider.send("eth_requestAccounts", []);
+                        } else {
+                            alert('Bybit Wallet is not installed. Please install it to continue.');
+                            return;
+                        }
+                        break;
+                        
+                    case 'bitget':
+                        if (window.ethereum && window.ethereum.isBitKeep) {
+                            provider = new ethers.providers.Web3Provider(window.ethereum);
+                            await provider.send("eth_requestAccounts", []);
+                        } else {
+                            alert('Bitget Wallet is not installed. Please install it to continue.');
                             return;
                         }
                         break;
@@ -826,6 +1176,12 @@
                 networkIndicator.className = `network-indicator ${appState.currentNetwork}`;
                 networkIndicator.textContent = appState.currentNetwork === 'mainnet' ? 'Mainnet' : 'Testnet';
             }
+        }
+
+        // Initialize network toggle
+        function initNetworkToggle() {
+            document.querySelector('.network-toggle-btn.testnet').classList.toggle('active', appState.currentNetwork === 'testnet');
+            document.querySelector('.network-toggle-btn.mainnet').classList.toggle('active', appState.currentNetwork === 'mainnet');
         }
 
         // Show admin panel
