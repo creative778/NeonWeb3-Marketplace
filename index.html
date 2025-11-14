@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeonWeb3 Marketplace</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        /* Your existing CSS styles here */
+        body {
+            background: #0d0d0d;
+            color: #0ff;
+            font-family: 'Orbitron', sans-serif;
+        }
+        .glass {
+            background: rgba(255,255,255,0.05);
+            border-radius: 20px;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 2rem;
+            margin: 2rem 0;
+        }
+        .neon-border {
+            border: 2px solid #0ff;
+            box-shadow: 0 0 15px #0ff;
+        }
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        .floating {
+            animation: float 6s infinite ease-in-out;
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+        }
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(0, 255, 255, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(0, 255, 255, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(0, 255, 255, 0); }
+        }
+        .hover-scale {
+            transition: transform 0.3s ease;
+        }
+        .hover-scale:hover {
+            transform: scale(1.05);
+        }
+        .wallet-btn {
+            background: linear-gradient(45deg, #0ff, #0080ff);
+            border: none;
+            border-radius: 50px;
+            padding: 8px 20px;
+            font-weight: bold;
+            color: #0d0d0d;
+        }
+        .tab-content {
+            padding-top: 20px;
+        }
+        .nav-pills .nav-link.active {
+            background-color: #0ff;
+            color: #0d0d0d;
+        }
+        .nav-pills .nav-link {
+            color: #0ff;
+            border: 1px solid #0ff;
+            margin: 0 5px;
+        }
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #ff3366;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+        .chart-container {
+            height: 300px;
+            margin: 20px 0;
+        }
+        .stake-card {
+            background: linear-gradient(135deg, rgba(0,255,255,0.1), rgba(0,128,255,0.1));
+            border-radius: 15px;
+            border: 1px solid rgba(0,255,255,0.3);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .launchpad-timer {
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="#"><i class="bi bi-coin"></i> NeonWeb3</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="#nft">NFTs</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#dao">DAO</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#crypto">Crypto</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#defi">DeFi</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#launchpad">Launchpad</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#gaming">Gaming</a></li>
+                    <li class="nav-item position-relative">
+                        <a class="nav-link" href="#notifications">
+                            <i class="bi bi-bell"></i>
+                            <span class="notification-badge">3</span>
+                        </a>
+                    </li>
+                    <li class="nav-item ms-3">
+                        <button class="wallet-btn" id="connectWallet">
+                            <i class="bi bi-wallet2"></i> Connect Wallet
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Your existing sections (DeFi, NFT, Launchpad, etc.) go here -->
+
+    <!-- Admin Login Modal -->
+    <div class="modal fade" id="adminLoginModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content glass neon-border">
+                <div class="modal-header">
+                    <h5 class="modal-title">Admin Login</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="adminLoginForm">
+                        <div class="mb-3">
+                            <label class="form-label">Username</label>
+                            <input type="text" class="form-control" id="adminUsername" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Password</label>
+                            <input type="password" class="form-control" id="adminPassword" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Login</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Panel Section -->
+    <section id="admin" class="glass" style="display: none;">
+        <div class="container">
+            <h2 class="text-center mb-4"><i class="bi bi-shield-lock"></i> Admin Dashboard</h2>
+            
+            <!-- Admin Navigation -->
+            <ul class="nav nav-pills mb-4 justify-content-center">
+                <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#userManagement">User Management</button></li>
+                <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#contentModeration">Content Moderation</button></li>
+                <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#passwordChange">Change Password</button></li>
+            </ul>
+
+            <!-- Admin Tabs Content -->
+            <div class="tab-content">
+                <!-- User Management -->
+                <div class="tab-pane fade show active" id="userManagement">
+                    <div class="card neon-border mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title">User Accounts</h5>
+                            <div class="table-responsive">
+                                <table class="table table-dark">
+                                    <thead>
+                                        <tr>
+                                            <th>Wallet Address</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>0x123...abc</td>
+                                            <td><span class="badge bg-success">Active</span></td>
+                                            <td>
+                                                <button class="btn btn-sm btn-danger">Suspend</button>
+                                                <button class="btn btn-sm btn-success">Approve</button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Content Moderation -->
+                <div class="tab-pane fade" id="contentModeration">
+                    <div class="card neon-border mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title">Pending Listings</h5>
+                            <div class="table-responsive">
+                                <table class="table table-dark">
+                                    <thead>
+                                        <tr>
+                                            <th>Item</th>
+                                            <th>Category</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>Cosmic Dreams #001</td>
+                                            <td>NFT</td>
+                                            <td>
+                                                <button class="btn btn-sm btn-success">Approve</button>
+                                                <button class="btn btn-sm btn-danger">Reject</button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Password Change -->
+                <div class="tab-pane fade" id="passwordChange">
+                    <div class="card neon-border mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title">Change Admin Password</h5>
+                            <form id="changePasswordForm">
+                                <div class="mb-3">
+                                    <label class="form-label">Current Password</label>
+                                    <input type="password" class="form-control" id="currentPassword" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">New Password</label>
+                                    <input type="password" class="form-control" id="newPassword" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Confirm Password</label>
+                                    <input type="password" class="form-control" id="confirmPassword" required>
+                                </div>
+                                <button type="submit" class="btn btn-primary w-100">Update Password</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center mt-4">
+                <button class="btn btn-outline-light" id="adminLogout">Logout</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="text-center glass py-4">
+        <p>&copy; 2025 NeonWeb3 Marketplace. Built on Ethereum.</p>
+        <div>
+            <a href="https://github.com" class="text-light me-3"><i class="bi bi-github"></i></a>
+            <a href="https://twitter.com" class="text-light me-3"><i class="bi bi-twitter"></i></a>
+            <a href="https://discord.com" class="text-light me-3"><i class="bi bi-discord"></i></a>
+            <a href="https://telegram.org" class="text-light"><i class="bi bi-telegram"></i></a>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Admin credentials storage (for demo purposes - in production use secure storage)
+        let adminCredentials = {
+            username: "admin",
+            password: "admin123"
+        };
+
+        // Check if admin is logged in
+        const adminLoggedIn = localStorage.getItem('adminLoggedIn') === 'true';
+
+        // Show admin panel if logged in
+        if (adminLoggedIn) {
+            document.getElementById('admin').style.display = 'block';
+            document.querySelector('.navbar-nav').innerHTML += `
+                <li class="nav-item">
+                    <a class="nav-link" href="#admin">Admin</a>
+                </li>
+            `;
+        }
+
+        // Admin login form handler
+        document.getElementById('adminLoginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const username = document.getElementById('adminUsername').value;
+            const password = document.getElementById('adminPassword').value;
+
+            if (username === adminCredentials.username && password === adminCredentials.password) {
+                localStorage.setItem('adminLoggedIn', 'true');
+                document.getElementById('admin').style.display = 'block';
+                document.querySelector('.navbar-nav').innerHTML += `
+                    <li class="nav-item">
+                        <a class="nav-link" href="#admin">Admin</a>
+                    </li>
+                `;
+                $('#adminLoginModal').modal('hide');
+            } else {
+                alert('Invalid credentials');
+            }
+        });
+
+        // Password change form handler
+        document.getElementById('changePasswordForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const current = document.getElementById('currentPassword').value;
+            const newPass = document.getElementById('newPassword').value;
+            const confirm = document.getElementById('confirmPassword').value;
+
+            if (current !== adminCredentials.password) {
+                alert('Current password is incorrect');
+                return;
+            }
+
+            if (newPass !== confirm) {
+                alert('Passwords do not match');
+                return;
+            }
+
+            adminCredentials.password = newPass;
+            alert('Password updated successfully');
+        });
+
+        // Admin logout handler
+        document.getElementById('adminLogout').addEventListener('click', function() {
+            localStorage.removeItem('adminLoggedIn');
+            document.getElementById('admin').style.display = 'none';
+            document.querySelector('.navbar-nav .nav-link[href="#admin"]').remove();
+        });
+
+        // Countdown timer for launchpad
+        function updateTimer() {
+            const timer1 = document.getElementById('timer1');
+            if (timer1) {
+                // This would normally calculate from a real end date
+                // For demo purposes, we'll just decrement the timer
+                const timeString = timer1.textContent;
+                const parts = timeString.match(/(\d+)d (\d+)h (\d+)m (\d+)s/);
+                if (parts) {
+                    let days = parseInt(parts[1]);
+                    let hours = parseInt(parts[2]);
+                    let minutes = parseInt(parts[3]);
+                    let seconds = parseInt(parts[4]);
+                    
+                    seconds--;
+                    if (seconds < 0) {
+                        seconds = 59;
+                        minutes--;
+                        if (minutes < 0) {
+                            minutes = 59;
+                            hours--;
+                            if (hours < 0) {
+                                hours = 23;
+                                days--;
+                                if (days < 0) {
+                                    days = 0;
+                                    hours = 0;
+                                    minutes = 0;
+                                    seconds = 0;
+                                }
+                            }
+                        }
+                    }
+                    
+                    timer1.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+                }
+            }
+        }
+        
+        // Update timer every second
+        setInterval(updateTimer, 1000);
+        
+        // Connect wallet functionality (demo)
+        document.getElementById('connectWallet').addEventListener('click', function() {
+            this.innerHTML = '<i class="bi bi-wallet2"></i> 0x1234...5678';
+            this.classList.add('pulse');
+        });
+        
+        // Calculate total when amount changes
+        document.querySelectorAll('input[type="number"]').forEach(input => {
+            input.addEventListener('input', function() {
+                if (this.placeholder === '0.00' && this.parentElement.previousElementSibling?.textContent === 'Amount (BTC)') {
+                    const amount = parseFloat(this.value) || 0;
+                    const price = parseFloat(63420.50);
+                    const total = amount * price;
+                    const totalInput = this.parentElement.nextElementSibling.querySelector('input');
+                    if (totalInput) {
+                        totalInput.value = total.toFixed(2);
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
