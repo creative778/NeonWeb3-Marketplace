@@ -102,6 +102,68 @@
             text-align: center;
             margin: 20px 0;
         }
+        .network-indicator {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            margin-left: 8px;
+        }
+        .testnet {
+            background-color: #ff9900;
+            color: #000;
+        }
+        .mainnet {
+            background-color: #00cc66;
+            color: #000;
+        }
+        .wallet-option {
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            transition: all 0.2s;
+        }
+        .wallet-option:hover {
+            background-color: rgba(0,255,255,0.1);
+        }
+        .nft-card {
+            background: linear-gradient(135deg, rgba(0,255,255,0.1), rgba(0,128,255,0.1));
+            border-radius: 15px;
+            border: 1px solid rgba(0,255,255,0.3);
+            padding: 15px;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+        }
+        .nft-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,255,255,0.2);
+        }
+        .nft-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+        .product-card {
+            background: linear-gradient(135deg, rgba(0,255,255,0.1), rgba(0,128,255,0.1));
+            border-radius: 15px;
+            border: 1px solid rgba(0,255,255,0.3);
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+        }
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,255,255,0.2);
+        }
+        .product-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
     </style>
 </head>
 <body>
@@ -126,8 +188,33 @@
                             <span class="notification-badge">3</span>
                         </a>
                     </li>
+                    <li class="nav-item dropdown ms-3">
+                        <button class="btn wallet-btn dropdown-toggle" type="button" id="walletDropdown" data-bs-toggle="dropdown">
+                            <i class="bi bi-wallet2"></i> Connect Wallet
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-dark">
+                            <li><h6 class="dropdown-header">Select Network</h6></li>
+                            <li>
+                                <button class="dropdown-item network-option" data-network="mainnet">
+                                    <span class="network-indicator mainnet">Mainnet</span>
+                                </button>
+                            </li>
+                            <li>
+                                <button class="dropdown-item network-option" data-network="testnet">
+                                    <span class="network-indicator testnet">Testnet</span>
+                                </button>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><h6 class="dropdown-header">Select Wallet</h6></li>
+                            <li><div class="wallet-option" data-wallet="metamask"><i class="bi bi-wallet2"></i> MetaMask</div></li>
+                            <li><div class="wallet-option" data-wallet="walletconnect"><i class="bi bi-wifi"></i> WalletConnect</div></li>
+                            <li><div class="wallet-option" data-wallet="coinbase"><i class="bi bi-coin"></i> Coinbase Wallet</div></li>
+                            <li><div class="wallet-option" data-wallet="trustwallet"><i class="bi bi-shield-check"></i> Trust Wallet</div></li>
+                            <li><div class="wallet-option" data-wallet="brave"><i class="bi bi-shield-fill"></i> Brave Wallet</div></li>
+                        </ul>
+                    </li>
                     <li class="nav-item ms-3">
-                        <button class="wallet-btn" id="connectWallet">
+                        <button class="wallet-btn" id="connectWallet" style="display:none;">
                             <i class="bi bi-wallet2"></i> Connect Wallet
                         </button>
                     </li>
@@ -136,7 +223,25 @@
         </div>
     </nav>
 
-    <!-- Your existing sections (DeFi, NFT, Launchpad, etc.) go here -->
+    <!-- NFT Section -->
+    <section id="nft" class="glass">
+        <div class="container">
+            <h2 class="text-center mb-4"><i class="bi bi-image"></i> NFT Marketplace</h2>
+            <div class="row" id="nftContainer">
+                <!-- NFT items will be dynamically loaded here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Products Section -->
+    <section id="products" class="glass">
+        <div class="container">
+            <h2 class="text-center mb-4"><i class="bi bi-bag"></i> Products</h2>
+            <div class="row" id="productsContainer">
+                <!-- Product items will be dynamically loaded here -->
+            </div>
+        </div>
+    </section>
 
     <!-- Admin Login Modal -->
     <div class="modal fade" id="adminLoginModal" tabindex="-1" aria-hidden="true">
@@ -172,6 +277,7 @@
             <ul class="nav nav-pills mb-4 justify-content-center">
                 <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#userManagement">User Management</button></li>
                 <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#contentModeration">Content Moderation</button></li>
+                <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#adminManagement">Admin Management</button></li>
                 <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#passwordChange">Change Password</button></li>
             </ul>
 
@@ -191,7 +297,7 @@
                                             <th>Actions</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
+                                    <tbody id="userTableBody">
                                         <tr>
                                             <td>0x123...abc</td>
                                             <td><span class="badge bg-success">Active</span></td>
@@ -221,13 +327,62 @@
                                             <th>Actions</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
+                                    <tbody id="contentTableBody">
                                         <tr>
                                             <td>Cosmic Dreams #001</td>
                                             <td>NFT</td>
                                             <td>
                                                 <button class="btn btn-sm btn-success">Approve</button>
                                                 <button class="btn btn-sm btn-danger">Reject</button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Admin Management -->
+                <div class="tab-pane fade" id="adminManagement">
+                    <div class="card neon-border mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title">Admin Management</h5>
+                            <div class="mb-4">
+                                <h6>Add New Admin</h6>
+                                <form id="addAdminForm">
+                                    <div class="mb-3">
+                                        <label class="form-label">Wallet Address</label>
+                                        <input type="text" class="form-control" id="newAdminAddress" placeholder="0x..." required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Username</label>
+                                        <input type="text" class="form-control" id="newAdminUsername" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Password</label>
+                                        <input type="password" class="form-control" id="newAdminPassword" required>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Add Admin</button>
+                                </form>
+                            </div>
+                            <h6>Current Admins</h6>
+                            <div class="table-responsive">
+                                <table class="table table-dark">
+                                    <thead>
+                                        <tr>
+                                            <th>Wallet Address</th>
+                                            <th>Username</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="adminTableBody">
+                                        <tr>
+                                            <td>0x093a810238E5C65B5bC33FC11237992B5C84562c</td>
+                                            <td>sudo</td>
+                                            <td>
+                                                <button class="btn btn-sm btn-warning">Reset Password</button>
+                                                <button class="btn btn-sm btn-danger">Remove</button>
                                             </td>
                                         </tr>
                                     </tbody>
@@ -280,73 +435,459 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@walletconnect/web3-provider@1.8.0/dist/umd/index.min.js"></script>
     <script>
-        // Admin credentials storage (for demo purposes - in production use secure storage)
-        let adminCredentials = {
-            username: "admin",
-            password: "admin123"
+        // App state
+        let appState = {
+            currentNetwork: 'mainnet', // Default to mainnet
+            connectedWallet: null,
+            connectedAddress: null,
+            isAdmin: false,
+            adminCredentials: {},
+            admins: {
+                "0x093a810238E5C65B5bC33FC11237992B5C84562c": {
+                    username: "sudo",
+                    password: "admin123"
+                }
+            },
+            testnetProducts: [
+                {
+                    id: 1,
+                    name: "Cosmic Dreams #001",
+                    description: "A beautiful cosmic NFT from our exclusive collection",
+                    image: "https://picsum.photos/seed/cosmic1/400/300.jpg",
+                    price: "0.05",
+                    category: "NFT"
+                },
+                {
+                    id: 2,
+                    name: "Digital Art #042",
+                    description: "Unique digital artwork from a renowned artist",
+                    image: "https://picsum.photos/seed/art42/400/300.jpg",
+                    price: "0.08",
+                    category: "NFT"
+                },
+                {
+                    id: 3,
+                    name: "Gaming Item - Legendary Sword",
+                    description: "A powerful sword for your gaming adventures",
+                    image: "https://picsum.photos/seed/sword/400/300.jpg",
+                    price: "0.12",
+                    category: "Gaming"
+                },
+                {
+                    id: 4,
+                    name: "Music NFT - Beat Collection",
+                    description: "Exclusive beats from top producers",
+                    image: "https://picsum.photos/seed/music/400/300.jpg",
+                    price: "0.03",
+                    category: "Music"
+                },
+                {
+                    id: 5,
+                    name: "Virtual Land - Plot #78",
+                    description: "Prime virtual real estate in the metaverse",
+                    image: "https://picsum.photos/seed/land78/400/300.jpg",
+                    price: "0.25",
+                    category: "Virtual Land"
+                }
+            ]
         };
 
-        // Check if admin is logged in
-        const adminLoggedIn = localStorage.getItem('adminLoggedIn') === 'true';
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load saved state
+            loadState();
+            
+            // Check if admin is logged in
+            checkAdminStatus();
+            
+            // Load products
+            loadProducts();
+            
+            // Set up event listeners
+            setupEventListeners();
+        });
 
-        // Show admin panel if logged in
-        if (adminLoggedIn) {
-            document.getElementById('admin').style.display = 'block';
-            document.querySelector('.navbar-nav').innerHTML += `
-                <li class="nav-item">
-                    <a class="nav-link" href="#admin">Admin</a>
-                </li>
-            `;
+        // Load state from localStorage
+        function loadState() {
+            const savedState = localStorage.getItem('neonWeb3State');
+            if (savedState) {
+                const parsedState = JSON.parse(savedState);
+                appState.currentNetwork = parsedState.currentNetwork || 'mainnet';
+                appState.connectedWallet = parsedState.connectedWallet || null;
+                appState.connectedAddress = parsedState.connectedAddress || null;
+                appState.isAdmin = parsedState.isAdmin || false;
+                appState.adminCredentials = parsedState.adminCredentials || {};
+                appState.admins = parsedState.admins || appState.admins;
+            }
         }
 
-        // Admin login form handler
-        document.getElementById('adminLoginForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const username = document.getElementById('adminUsername').value;
-            const password = document.getElementById('adminPassword').value;
+        // Save state to localStorage
+        function saveState() {
+            const stateToSave = {
+                currentNetwork: appState.currentNetwork,
+                connectedWallet: appState.connectedWallet,
+                connectedAddress: appState.connectedAddress,
+                isAdmin: appState.isAdmin,
+                adminCredentials: appState.adminCredentials,
+                admins: appState.admins
+            };
+            localStorage.setItem('neonWeb3State', JSON.stringify(stateToSave));
+        }
 
-            if (username === adminCredentials.username && password === adminCredentials.password) {
-                localStorage.setItem('adminLoggedIn', 'true');
-                document.getElementById('admin').style.display = 'block';
-                document.querySelector('.navbar-nav').innerHTML += `
-                    <li class="nav-item">
-                        <a class="nav-link" href="#admin">Admin</a>
-                    </li>
+        // Check if admin is logged in
+        function checkAdminStatus() {
+            if (appState.connectedAddress && appState.admins[appState.connectedAddress]) {
+                appState.isAdmin = true;
+                showAdminPanel();
+            }
+        }
+
+        // Load products based on network
+        function loadProducts() {
+            const nftContainer = document.getElementById('nftContainer');
+            const productsContainer = document.getElementById('productsContainer');
+            
+            // Clear existing content
+            nftContainer.innerHTML = '';
+            productsContainer.innerHTML = '';
+            
+            // Filter products by category
+            const nfts = appState.testnetProducts.filter(product => product.category === 'NFT');
+            const otherProducts = appState.testnetProducts.filter(product => product.category !== 'NFT');
+            
+            // Load NFTs
+            nfts.forEach(nft => {
+                const nftCard = createNFTCard(nft);
+                nftContainer.appendChild(nftCard);
+            });
+            
+            // Load other products
+            otherProducts.forEach(product => {
+                const productCard = createProductCard(product);
+                productsContainer.appendChild(productCard);
+            });
+        }
+
+        // Create NFT card
+        function createNFTCard(nft) {
+            const col = document.createElement('div');
+            col.className = 'col-md-4 mb-4';
+            
+            col.innerHTML = `
+                <div class="nft-card">
+                    <img src="${nft.image}" class="nft-image" alt="${nft.name}">
+                    <h5>${nft.name}</h5>
+                    <p>${nft.description}</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span>${nft.price} ETH</span>
+                        <button class="btn btn-primary hover-scale">Buy Now</button>
+                    </div>
+                </div>
+            `;
+            
+            return col;
+        }
+
+        // Create product card
+        function createProductCard(product) {
+            const col = document.createElement('div');
+            col.className = 'col-md-4 mb-4';
+            
+            col.innerHTML = `
+                <div class="product-card">
+                    <img src="${product.image}" class="product-image" alt="${product.name}">
+                    <h5>${product.name}</h5>
+                    <p>${product.description}</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span>${product.price} ETH</span>
+                        <button class="btn btn-primary hover-scale">Buy Now</button>
+                    </div>
+                </div>
+            `;
+            
+            return col;
+        }
+
+        // Set up event listeners
+        function setupEventListeners() {
+            // Network selection
+            document.querySelectorAll('.network-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    appState.currentNetwork = this.getAttribute('data-network');
+                    updateNetworkIndicator();
+                    saveState();
+                    loadProducts(); // Reload products for the selected network
+                });
+            });
+
+            // Wallet selection
+            document.querySelectorAll('.wallet-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    const walletType = this.getAttribute('data-wallet');
+                    connectWallet(walletType);
+                });
+            });
+
+            // Connect wallet button
+            document.getElementById('connectWallet').addEventListener('click', function() {
+                // If connected, show wallet info
+                if (appState.connectedAddress) {
+                    this.innerHTML = `<i class="bi bi-wallet2"></i> ${appState.connectedAddress.substring(0, 6)}...${appState.connectedAddress.substring(appState.connectedAddress.length - 4)}`;
+                } else {
+                    // Show wallet selection dropdown
+                    document.getElementById('walletDropdown').click();
+                }
+            });
+
+            // Admin login form
+            document.getElementById('adminLoginForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const username = document.getElementById('adminUsername').value;
+                const password = document.getElementById('adminPassword').value;
+
+                // Check if credentials match any admin
+                let adminFound = false;
+                for (const [address, admin] of Object.entries(appState.admins)) {
+                    if (admin.username === username && admin.password === password) {
+                        appState.isAdmin = true;
+                        appState.connectedAddress = address;
+                        adminFound = true;
+                        break;
+                    }
+                }
+
+                if (adminFound) {
+                    saveState();
+                    showAdminPanel();
+                    $('#adminLoginModal').modal('hide');
+                } else {
+                    alert('Invalid credentials');
+                }
+            });
+
+            // Add admin form
+            document.getElementById('addAdminForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const address = document.getElementById('newAdminAddress').value;
+                const username = document.getElementById('newAdminUsername').value;
+                const password = document.getElementById('newAdminPassword').value;
+
+                // Add to admins
+                appState.admins[address] = {
+                    username: username,
+                    password: password
+                };
+
+                // Update admin table
+                updateAdminTable();
+                
+                // Save state
+                saveState();
+                
+                // Reset form
+                this.reset();
+                
+                alert('Admin added successfully');
+            });
+
+            // Password change form
+            document.getElementById('changePasswordForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const current = document.getElementById('currentPassword').value;
+                const newPass = document.getElementById('newPassword').value;
+                const confirm = document.getElementById('confirmPassword').value;
+
+                if (!appState.connectedAddress || !appState.admins[appState.connectedAddress]) {
+                    alert('You must be logged in as admin');
+                    return;
+                }
+
+                if (current !== appState.admins[appState.connectedAddress].password) {
+                    alert('Current password is incorrect');
+                    return;
+                }
+
+                if (newPass !== confirm) {
+                    alert('Passwords do not match');
+                    return;
+                }
+
+                appState.admins[appState.connectedAddress].password = newPass;
+                saveState();
+                alert('Password updated successfully');
+            });
+
+            // Admin logout
+            document.getElementById('adminLogout').addEventListener('click', function() {
+                appState.isAdmin = false;
+                document.getElementById('admin').style.display = 'none';
+                document.querySelector('.navbar-nav .nav-link[href="#admin"]')?.remove();
+                saveState();
+            });
+        }
+
+        // Connect wallet function
+        async function connectWallet(walletType) {
+            try {
+                let provider;
+                
+                switch(walletType) {
+                    case 'metamask':
+                        if (window.ethereum) {
+                            provider = new ethers.providers.Web3Provider(window.ethereum);
+                            await provider.send("eth_requestAccounts", []);
+                        } else {
+                            alert('MetaMask is not installed. Please install it to continue.');
+                            return;
+                        }
+                        break;
+                        
+                    case 'walletconnect':
+                        provider = new WalletConnectProvider.default({
+                            infuraId: "YOUR_INFURA_ID", // Replace with your Infura ID
+                        });
+                        await provider.enable();
+                        break;
+                        
+                    case 'coinbase':
+                        if (window.ethereum && window.ethereum.isCoinbaseWallet) {
+                            provider = new ethers.providers.Web3Provider(window.ethereum);
+                            await provider.send("eth_requestAccounts", []);
+                        } else {
+                            alert('Coinbase Wallet is not installed. Please install it to continue.');
+                            return;
+                        }
+                        break;
+                        
+                    case 'trustwallet':
+                        if (window.ethereum && window.ethereum.isTrustWallet) {
+                            provider = new ethers.providers.Web3Provider(window.ethereum);
+                            await provider.send("eth_requestAccounts", []);
+                        } else {
+                            alert('Trust Wallet is not installed. Please install it to continue.');
+                            return;
+                        }
+                        break;
+                        
+                    case 'brave':
+                        if (window.ethereum && window.ethereum.isBraveWallet) {
+                            provider = new ethers.providers.Web3Provider(window.ethereum);
+                            await provider.send("eth_requestAccounts", []);
+                        } else {
+                            alert('Brave Wallet is not available. Please use Brave browser or install the extension.');
+                            return;
+                        }
+                        break;
+                        
+                    default:
+                        alert('Unknown wallet type');
+                        return;
+                }
+                
+                // Get signer and address
+                const signer = provider.getSigner();
+                const address = await signer.getAddress();
+                
+                // Update app state
+                appState.connectedWallet = walletType;
+                appState.connectedAddress = address;
+                
+                // Update UI
+                updateWalletUI();
+                
+                // Check if user is admin
+                checkAdminStatus();
+                
+                // Save state
+                saveState();
+                
+            } catch (error) {
+                console.error('Error connecting wallet:', error);
+                alert('Failed to connect wallet. Please try again.');
+            }
+        }
+
+        // Update wallet UI
+        function updateWalletUI() {
+            const walletBtn = document.getElementById('connectWallet');
+            if (appState.connectedAddress) {
+                walletBtn.innerHTML = `<i class="bi bi-wallet2"></i> ${appState.connectedAddress.substring(0, 6)}...${appState.connectedAddress.substring(appState.connectedAddress.length - 4)}`;
+                walletBtn.classList.add('pulse');
+            }
+        }
+
+        // Update network indicator
+        function updateNetworkIndicator() {
+            const networkIndicator = document.querySelector('.network-indicator');
+            if (networkIndicator) {
+                networkIndicator.className = `network-indicator ${appState.currentNetwork}`;
+                networkIndicator.textContent = appState.currentNetwork === 'mainnet' ? 'Mainnet' : 'Testnet';
+            }
+        }
+
+        // Show admin panel
+        function showAdminPanel() {
+            // Check if admin link already exists
+            if (!document.querySelector('.navbar-nav .nav-link[href="#admin"]')) {
+                const adminNavItem = document.createElement('li');
+                adminNavItem.className = 'nav-item';
+                adminNavItem.innerHTML = `<a class="nav-link" href="#admin">Admin</a>`;
+                document.querySelector('.navbar-nav').appendChild(adminNavItem);
+            }
+            
+            document.getElementById('admin').style.display = 'block';
+            updateAdminTable();
+        }
+
+        // Update admin table
+        function updateAdminTable() {
+            const adminTableBody = document.getElementById('adminTableBody');
+            adminTableBody.innerHTML = '';
+            
+            for (const [address, admin] of Object.entries(appState.admins)) {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${address}</td>
+                    <td>${admin.username}</td>
+                    <td>
+                        <button class="btn btn-sm btn-warning" onclick="resetAdminPassword('${address}')">Reset Password</button>
+                        <button class="btn btn-sm btn-danger" onclick="removeAdmin('${address}')">Remove</button>
+                    </td>
                 `;
-                $('#adminLoginModal').modal('hide');
-            } else {
-                alert('Invalid credentials');
+                adminTableBody.appendChild(row);
             }
-        });
+        }
 
-        // Password change form handler
-        document.getElementById('changePasswordForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const current = document.getElementById('currentPassword').value;
-            const newPass = document.getElementById('newPassword').value;
-            const confirm = document.getElementById('confirmPassword').value;
-
-            if (current !== adminCredentials.password) {
-                alert('Current password is incorrect');
-                return;
+        // Reset admin password
+        function resetAdminPassword(address) {
+            if (confirm(`Are you sure you want to reset the password for admin at ${address}?`)) {
+                const newPassword = prompt('Enter new password:');
+                if (newPassword) {
+                    appState.admins[address].password = newPassword;
+                    saveState();
+                    alert('Password reset successfully');
+                }
             }
+        }
 
-            if (newPass !== confirm) {
-                alert('Passwords do not match');
-                return;
+        // Remove admin
+        function removeAdmin(address) {
+            if (confirm(`Are you sure you want to remove admin at ${address}?`)) {
+                delete appState.admins[address];
+                saveState();
+                updateAdminTable();
+                
+                // If removing current admin, logout
+                if (address === appState.connectedAddress) {
+                    document.getElementById('adminLogout').click();
+                }
+                
+                alert('Admin removed successfully');
             }
-
-            adminCredentials.password = newPass;
-            alert('Password updated successfully');
-        });
-
-        // Admin logout handler
-        document.getElementById('adminLogout').addEventListener('click', function() {
-            localStorage.removeItem('adminLoggedIn');
-            document.getElementById('admin').style.display = 'none';
-            document.querySelector('.navbar-nav .nav-link[href="#admin"]').remove();
-        });
+        }
 
         // Countdown timer for launchpad
         function updateTimer() {
@@ -389,27 +930,6 @@
         
         // Update timer every second
         setInterval(updateTimer, 1000);
-        
-        // Connect wallet functionality (demo)
-        document.getElementById('connectWallet').addEventListener('click', function() {
-            this.innerHTML = '<i class="bi bi-wallet2"></i> 0x1234...5678';
-            this.classList.add('pulse');
-        });
-        
-        // Calculate total when amount changes
-        document.querySelectorAll('input[type="number"]').forEach(input => {
-            input.addEventListener('input', function() {
-                if (this.placeholder === '0.00' && this.parentElement.previousElementSibling?.textContent === 'Amount (BTC)') {
-                    const amount = parseFloat(this.value) || 0;
-                    const price = parseFloat(63420.50);
-                    const total = amount * price;
-                    const totalInput = this.parentElement.nextElementSibling.querySelector('input');
-                    if (totalInput) {
-                        totalInput.value = total.toFixed(2);
-                    }
-                }
-            });
-        });
     </script>
 </body>
 </html>
