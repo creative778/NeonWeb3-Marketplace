@@ -1,294 +1,496 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>NeonWeb3 Marketplace</title>
-  <link
-    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
-    rel="stylesheet"
-  />
-  <link
-    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css"
-    rel="stylesheet"
-  />
+  <title>NeonWeb3 Marketplace — Fixed</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&display=swap" rel="stylesheet">
+
   <style>
-    body {
-      background: #0d0d0d;
-      color: #0ff;
-      font-family: sans-serif;
-    }
-    .glass {
-      background: rgba(255,255,255,0.05);
-      border-radius: 12px;
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255,255,255,0.1);
-      padding: 1.5rem;
-      margin: 1.5rem 0;
-    }
-    .neon-border {
-      border: 2px solid #0ff;
-      box-shadow: 0 0 10px #0ff;
-    }
-    .wallet-btn, .admin-btn {
-      background: #0ff;
-      border: none;
-      border-radius: 50px;
-      color: #000;
-      font-weight: bold;
-    }
-    .network-toggle {
-      position: fixed;
-      top: 100px;
-      right: 20px;
-      z-index: 1000;
-    }
-    .network-toggle button {
-      margin: 0 4px;
-    }
-    .network-badge {
-      position: absolute;
-      top: 10px;
-      left: 10px;
-      padding: 4px 8px;
-      background: rgba(0,255,255,0.2);
-      border-radius: 8px;
-      font-size: 0.75rem;
-    }
-    .network-badge.mainnet { background: rgba(0,204,102,0.2); }
-    .network-badge.testnet { background: rgba(255,153,0,0.2); }
+    body { background:#0d0d0d; color:#0ff; font-family:'Orbitron',sans-serif; }
+    .glass { background: rgba(255,255,255,0.05); border-radius:20px; backdrop-filter:blur(12px); border:1px solid rgba(255,255,255,0.08); padding:1.75rem; margin:1.5rem 0; }
+    .neon-border { border:2px solid #0ff; box-shadow:0 0 15px #0ff; }
+    .wallet-btn { background: linear-gradient(45deg,#0ff,#0080ff); border:none; border-radius:50px; padding:8px 18px; font-weight:700; color:#0d0d0d; }
+    .hover-scale { transition: transform .25s ease; } .hover-scale:hover { transform: scale(1.05); }
+    .nft-card, .product-card { background: linear-gradient(135deg, rgba(0,255,255,0.06), rgba(0,128,255,0.06)); border-radius:12px; border:1px solid rgba(0,255,255,0.12); padding:12px; margin-bottom:18px; }
+    .nft-image, .product-image { width:100%; height:200px; object-fit:cover; border-radius:8px; margin-bottom:12px; }
+    .network-toggle { position: fixed; top:84px; right:18px; z-index:1200; }
+    .network-toggle-btn { margin:0 4px; padding:6px 12px; border-radius:18px; font-weight:700; cursor:pointer; border:1px solid rgba(255,255,255,0.05); }
+    .network-toggle-btn.active.testnet { background:#ff9900; color:#000; border-color:#ff9900; }
+    .network-toggle-btn.active.mainnet { background:#00cc66; color:#000; border-color:#00cc66; }
+    .network-badge { position:absolute; top:10px; left:10px; padding:4px 8px; border-radius:10px; font-size:.78rem; background: rgba(0,255,255,0.06); color:#0ff; }
+    .testnet-badge { background: rgba(255,153,0,0.12); color:#000; }
+    .mainnet-badge { background: rgba(0,204,102,0.12); color:#000; }
   </style>
 </head>
 <body>
-  <!-- NAVBAR -->
-  <nav class="navbar navbar-dark bg-dark">
+  <!-- NAV -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
     <div class="container-fluid">
-      <a class="navbar-brand"><i class="bi bi-coin"></i> NeonWeb3</a>
-      <div>
-        <button class="btn admin-btn me-2" id="adminLoginBtn">
-          <i class="bi bi-shield-lock"></i> Admin Login
-        </button>
-        <button class="btn wallet-btn" id="connectWalletBtn">
-          <i class="bi bi-wallet2"></i> Connect Wallet
-        </button>
+      <a class="navbar-brand" href="#"><i class="bi bi-coin"></i> NeonWeb3</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navMenu">
+        <ul class="navbar-nav ms-auto align-items-center">
+          <li class="nav-item"><a class="nav-link" href="#nft">NFTs</a></li>
+          <li class="nav-item"><a class="nav-link" href="#products">Products</a></li>
+
+          <li class="nav-item ms-3">
+            <button class="btn wallet-btn" id="adminLoginBtn" data-bs-toggle="modal" data-bs-target="#adminLoginModal">
+              <i class="bi bi-person-lock"></i> Admin Login
+            </button>
+          </li>
+
+          <li class="nav-item ms-3 dropdown">
+            <button class="btn wallet-btn dropdown-toggle" id="walletDropdown" data-bs-toggle="dropdown">
+              <i class="bi bi-wallet2"></i> Connect Wallet
+            </button>
+            <ul class="dropdown-menu dropdown-menu-dark">
+              <li><div class="dropdown-item" id="connectInjected">Browser Wallet (MetaMask, Rabby, Brave...)</div></li>
+              <li><div class="dropdown-item" id="connectWC">WalletConnect</div></li>
+            </ul>
+          </li>
+
+          <li class="nav-item ms-3" id="adminNavLink" style="display:none;"><a class="nav-link" href="#admin">Admin</a></li>
+        </ul>
       </div>
     </div>
   </nav>
 
   <!-- NETWORK TOGGLE -->
   <div class="network-toggle">
-    <button class="btn btn-outline-light" data-net="testnet">Testnet</button>
-    <button class="btn btn-outline-light" data-net="mainnet">Mainnet</button>
+    <span class="network-toggle-btn testnet active" data-network="testnet">Testnet</span>
+    <span class="network-toggle-btn mainnet" data-network="mainnet">Mainnet</span>
   </div>
 
   <!-- NFT SECTION -->
   <section id="nft" class="glass position-relative">
-    <h2>NFT Marketplace</h2>
-    <div class="row" id="nftContainer"></div>
+    <div class="container">
+      <h2 class="text-center mb-4"><i class="bi bi-image"></i> NFT Marketplace</h2>
+
+      <div class="glass neon-border mb-4">
+        <h5>Create NFT (demo)</h5>
+        <form id="createNFTForm">
+          <div class="row">
+            <div class="col-md-6 mb-2">
+              <input class="form-control" id="nftName" placeholder="Name" required>
+            </div>
+            <div class="col-md-6 mb-2">
+              <select id="nftNetwork" class="form-select">
+                <option value="testnet" selected>Testnet</option>
+                <option value="mainnet">Mainnet</option>
+              </select>
+            </div>
+          </div>
+          <div class="mb-2"><input class="form-control" id="nftPrice" placeholder="Price in ETH" type="number" step="0.01" required></div>
+          <div class="mb-2"><textarea id="nftDesc" class="form-control" placeholder="Description"></textarea></div>
+          <div class="d-grid"><button class="btn btn-primary" type="submit">Create NFT</button></div>
+        </form>
+      </div>
+
+      <div class="row" id="nftContainer"></div>
+    </div>
   </section>
 
-  <!-- PRODUCTS SECTION -->
-  <section id="products" class="glass position-relative">
-    <h2>Products</h2>
-    <div class="row" id="prodContainer"></div>
-  </section>
-
-  <!-- ADMIN PANEL -->
-  <section id="adminPanel" class="glass neon-border" style="display:none;">
-    <h2>Admin Dashboard</h2>
-    <p>Network is currently: <strong id="adminNetwork"></strong></p>
-    <button class="btn btn-danger" id="adminLogoutBtn">Logout Admin</button>
+  <!-- PRODUCTS -->
+  <section id="products" class="glass">
+    <div class="container">
+      <h2 class="text-center mb-4"><i class="bi bi-bag"></i> Products</h2>
+      <div class="row" id="productsContainer"></div>
+    </div>
   </section>
 
   <!-- ADMIN LOGIN MODAL -->
-  <div class="modal fade" id="adminModal" tabindex="-1">
-    <div class="modal-dialog">
+  <div class="modal fade" id="adminLoginModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content glass neon-border">
         <div class="modal-header">
-          <h5 class="modal-title">Admin Login</h5>
+          <h5 class="modal-title">Admin Login (username/password)</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">
-          <form id="adminForm">
-            <div class="mb-3">
-              <label>Username</label>
-              <input type="text" id="adminUser" class="form-control" required />
+          <form id="adminLoginForm">
+            <div class="mb-2">
+              <label class="form-label">Username</label>
+              <input id="adminUsername" class="form-control" required>
             </div>
-            <div class="mb-3">
-              <label>Password</label>
-              <input type="password" id="adminPass" class="form-control" required />
+            <div class="mb-2">
+              <label class="form-label">Password</label>
+              <input id="adminPassword" type="password" class="form-control" required>
             </div>
-            <button class="btn btn-primary w-100">Login</button>
+            <div class="d-grid"><button class="btn btn-primary" type="submit">Login</button></div>
           </form>
+          <hr>
+          <small class="text-muted">Or you can login as admin by connecting a wallet if that wallet address is registered as an admin.</small>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- FOOTER -->
-  <footer class="text-center py-3">
-    &copy; 2025 NeonWeb3
+  <!-- ADMIN PANEL -->
+  <section id="admin" class="glass" style="display:none;">
+    <div class="container">
+      <h2 class="text-center mb-4"><i class="bi bi-shield-lock"></i> Admin Dashboard</h2>
+
+      <ul class="nav nav-pills mb-4 justify-content-center">
+        <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#networkControl">Network Control</button></li>
+        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#adminManage">Admins</button></li>
+      </ul>
+
+      <div class="tab-content">
+        <div class="tab-pane show active" id="networkControl">
+          <div class="card neon-border mb-3">
+            <div class="card-body">
+              <h5>Active network: <span id="currentAdminNetwork" class="badge bg-info">testnet</span></h5>
+              <div class="mt-3">
+                <button id="activateTestnet" class="btn btn-warning me-2">Activate Testnet</button>
+                <button id="activateMainnet" class="btn btn-success">Activate Mainnet</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-pane" id="adminManage">
+          <div class="card neon-border">
+            <div class="card-body">
+              <h5>Admins</h5>
+              <form id="addAdminForm" class="row g-2 mb-3">
+                <div class="col-md-4">
+                  <input id="newAdminKey" class="form-control" placeholder="Wallet address or username (key)"/>
+                </div>
+                <div class="col-md-3">
+                  <input id="newAdminUsername" class="form-control" placeholder="Display username" required/>
+                </div>
+                <div class="col-md-3">
+                  <input id="newAdminPass" class="form-control" placeholder="Password" required/>
+                </div>
+                <div class="col-md-2">
+                  <button class="btn btn-primary w-100" type="submit">Add</button>
+                </div>
+              </form>
+
+              <div class="table-responsive">
+                <table class="table table-dark">
+                  <thead><tr><th>Key</th><th>Username</th><th>Type</th><th>Action</th></tr></thead>
+                  <tbody id="adminTableBody"></tbody>
+                </table>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="text-center mt-3">
+        <button id="adminLogout" class="btn btn-outline-light">Admin Logout</button>
+      </div>
+
+    </div>
+  </section>
+
+  <footer class="text-center glass py-3">
+    <div>&copy; 2025 NeonWeb3 Marketplace</div>
   </footer>
 
-  <!-- SCRIPTS -->
+  <!-- SCRIPTS: Bootstrap first, then ethers, then walletconnect, then our app script -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@walletconnect/web3-provider@1.8.0/dist/umd/index.min.js"></script>
+
   <script>
-    // ── APP STATE ────────────────────────────────────────
-    const state = {
-      network: localStorage.getItem('nw') || 'testnet',
-      walletAddress: localStorage.getItem('addr') || null,
-      adminLoggedIn: localStorage.getItem('admin') === '1',
-      adminCreds: { user:'admin', pass:'admin123' },
+    // ======= APP STATE =======
+    const app = {
+      currentNetwork: 'testnet',
+      provider: null,
+      signer: null,
+      address: null,
+      isAdmin: false,
+      // Admins keyed by either wallet address (if authType='wallet') or simple key/username (if authType='credentials')
+      admins: {
+        // Example wallet-based admin (replace with a real address if you want wallet-based admin)
+        "0x093a810238E5C65B5bC33FC11237992B5C84562c": { username: "walletAdmin", password: "", authType: "wallet" },
+        // Your requested credential admin:
+        "Admin": { username: "Admin", password: "admin123", authType: "credentials" }
+      },
       testnetItems: [
-        { id:1,name:'Cosmic #1',desc:'Testnet NFT',img:'https://picsum.photos/seed/a/400/300',price:'0.05',cat:'NFT',net:'testnet' }
+        { id: 1, name: "Cosmic Dreams #001", description: "A cosmic NFT", image: "https://picsum.photos/seed/cosmic1/400/300.jpg", price: "0.05", category: "NFT", network: "testnet" },
+        { id: 2, name: "Legend Sword", description: "Gaming item", image: "https://picsum.photos/seed/sword/400/300.jpg", price:"0.12", category:"Product", network:"testnet" }
       ],
       mainnetItems: [
-        { id:101,name:'Premium #1',desc:'Mainnet NFT',img:'https://picsum.photos/seed/b/400/300',price:'1.0',cat:'NFT',net:'mainnet' }
+        { id: 101, name: "Premium #101", description: "Mainnet premium", image: "https://picsum.photos/seed/premium1/400/300.jpg", price:"1.0", category:"NFT", network:"mainnet" }
       ]
     };
 
-    // ── HELPERS ─────────────────────────────────────────
-    function saveState(){
-      localStorage.setItem('nw',state.network);
-      state.walletAddress
-        ? localStorage.setItem('addr',state.walletAddress)
-        : localStorage.removeItem('addr');
-      localStorage.setItem('admin', state.adminLoggedIn ? '1':'0');
+    // ======= UTILS =======
+    function saveState() {
+      const s = {
+        currentNetwork: app.currentNetwork,
+        address: app.address,
+        admins: app.admins,
+        testnetItems: app.testnetItems,
+        mainnetItems: app.mainnetItems,
+        adminSession: localStorage.getItem('adminSession') || null
+      };
+      localStorage.setItem('neon_state', JSON.stringify(s));
+    }
+    function loadState() {
+      const raw = localStorage.getItem('neon_state');
+      if (!raw) return;
+      try {
+        const s = JSON.parse(raw);
+        if (s.currentNetwork) app.currentNetwork = s.currentNetwork;
+        if (s.address) app.address = s.address;
+        if (s.admins) app.admins = s.admins;
+        if (s.testnetItems) app.testnetItems = s.testnetItems;
+        if (s.mainnetItems) app.mainnetItems = s.mainnetItems;
+      } catch (e) { console.warn('loadState parse failed', e); }
     }
 
-    // ── RENDERING ───────────────────────────────────────
-    function renderNetworkToggle(){
-      document.querySelectorAll('.network-toggle button').forEach(b=>{
-        b.classList.toggle('active',b.dataset.net===state.network);
-      });
-    }
-    function renderItems(){
-      const containerNFT = document.getElementById('nftContainer');
-      const containerP = document.getElementById('prodContainer');
-      containerNFT.innerHTML=''; containerP.innerHTML='';
-      const items = state.network==='testnet' ? state.testnetItems : state.mainnetItems;
-      items.forEach(i=>{
-        const col = document.createElement('div');
-        col.className='col-md-4 mb-3 position-relative';
-        col.innerHTML=`
-          <span class="network-badge ${i.net}">${i.net}</span>
-          <div class="glass">
-            <img src="${i.img}" class="img-fluid mb-2" />
-            <h5>${i.name}</h5>
-            <p>${i.desc}</p>
-            <div class="d-flex justify-content-between">
-              <span>${i.price} ETH</span>
-              <button class="btn btn-sm btn-primary buy" data-id="${i.id}">Buy</button>
+    // ======= RENDER =======
+    function renderItems() {
+      const nct = document.getElementById('nftContainer');
+      const pct = document.getElementById('productsContainer');
+      nct.innerHTML = ''; pct.innerHTML = '';
+
+      const items = (app.currentNetwork === 'testnet') ? app.testnetItems : app.mainnetItems;
+      items.forEach(it => {
+        const col = document.createElement('div'); col.className = 'col-md-4 mb-3 position-relative';
+        col.innerHTML = `
+          <span class="network-badge ${it.network==='testnet'?'testnet-badge':'mainnet-badge'}">${it.network}</span>
+          <div class="${it.category.toLowerCase()}-card">
+            <img src="${it.image}" class="${it.category.toLowerCase()}-image" alt="${it.name}">
+            <h5>${it.name}</h5>
+            <p>${it.description}</p>
+            <div class="d-flex justify-content-between align-items-center">
+              <span>${it.price} ETH</span>
+              <button class="btn btn-primary buy-btn" data-id="${it.id}">Buy</button>
             </div>
           </div>`;
-        if(i.cat==='NFT') containerNFT.append(col);
-        else containerP.append(col);
+        if (it.category === 'NFT') nct.appendChild(col); else pct.appendChild(col);
+      });
+
+      document.getElementById('currentAdminNetwork').textContent = app.currentNetwork;
+      // network toggle buttons UI
+      document.querySelectorAll('.network-toggle-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('data-network') === app.currentNetwork);
+        btn.classList.toggle('testnet', btn.getAttribute('data-network') === 'testnet');
+        btn.classList.toggle('mainnet', btn.getAttribute('data-network') === 'mainnet');
       });
     }
-    function renderWalletBtn(){
-      const btn = document.getElementById('connectWalletBtn');
-      if(state.walletAddress){
-        btn.innerHTML = `<i class="bi bi-wallet2"></i> ${state.walletAddress.slice(0,6)}…${state.walletAddress.slice(-4)}`;
-      } else {
-        btn.innerHTML = `<i class="bi bi-wallet2"></i> Connect Wallet`;
-      }
-    }
-    function renderAdminPanel(){
-      document.getElementById('adminPanel').style.display = state.adminLoggedIn?'block':'none';
-      if(state.adminLoggedIn){
-        document.getElementById('adminNetwork').innerText = state.network;
-      }
-    }
 
-    // ── WALLET CONNECT ─────────────────────────────────
-    async function connectWallet() {
+    // ======= WALLET CONNECTION (INJECTED & WALLETCONNECT) =======
+    async function connectInjected() {
       try {
-        let provider;
-        // If user wants WalletConnect, you'd call:
-        // const wc = new WalletConnectProvider.default({ infuraId:'YOUR_INFURA_ID' });
-        // await wc.enable();
-        // provider = new ethers.providers.Web3Provider(wc);
-        // For now, we just use injected (MetaMask, Rabby, Bybit, etc.)
-        if(!window.ethereum) throw new Error('No injected wallet found');
-        provider = new ethers.providers.Web3Provider(window.ethereum, 'any');
-        // Request accounts
-        await provider.send('eth_requestAccounts', []);
-        const signer = provider.getSigner();
-        const addr = await signer.getAddress();
-        state.walletAddress = addr;
+        if (!window.ethereum) throw new Error('No injected wallet found (MetaMask/Rabby/Brave).');
+        // provider must be created after ethers is loaded (we included ethers before this script)
+        app.provider = new ethers.providers.Web3Provider(window.ethereum, 'any');
+        // request accounts
+        await window.ethereum.request({ method: 'eth_requestAccounts' });
+        app.signer = app.provider.getSigner();
+        app.address = await app.signer.getAddress();
+        document.getElementById('walletDropdown').innerHTML = `<i class="bi bi-wallet2"></i> ${app.address.slice(0,6)}...${app.address.slice(-4)}`;
         saveState();
-        renderWalletBtn();
-      } catch(e){
-        console.error(e);
-        alert('Failed to connect wallet: '+ e.message);
+        await afterConnectChecks();
+        alert('Wallet connected: ' + app.address);
+      } catch (err) {
+        console.error('Injected connect error', err);
+        alert('Failed to connect wallet: ' + (err.message || err));
       }
     }
 
-    // ── ADMIN LOGIN ────────────────────────────────────
-    function tryAdminLogin(e){
-      e.preventDefault();
-      const u = document.getElementById('adminUser').value;
-      const p = document.getElementById('adminPass').value;
-      if(u===state.adminCreds.user && p===state.adminCreds.pass){
-        state.adminLoggedIn = true;
+    async function connectWalletConnect() {
+      try {
+        // Use public RPC endpoints (no Infura key). Provide mapping for mainnet and sepolia (sepolia chain id: 11155111)
+        const wcProvider = new WalletConnectProvider.default({
+          rpc: {
+            1: "https://cloudflare-eth.com",           // mainnet (public)
+            11155111: "https://rpc.sepolia.org"        // sepolia testnet (public endpoint)
+          },
+          qrcode: true
+        });
+        await wcProvider.enable();
+        app.provider = new ethers.providers.Web3Provider(wcProvider, 'any');
+        app.signer = app.provider.getSigner();
+        app.address = await app.signer.getAddress();
+        document.getElementById('walletDropdown').innerHTML = `<i class="bi bi-wallet2"></i> ${app.address.slice(0,6)}...${app.address.slice(-4)}`;
         saveState();
-        renderAdminPanel();
-        const modal = bootstrap.Modal.getInstance(document.getElementById('adminModal'));
-        modal.hide();
-      } else {
-        alert('Invalid admin credentials');
+        await afterConnectChecks();
+        alert('WalletConnect connected: ' + app.address);
+      } catch (err) {
+        console.error('WalletConnect error', err);
+        alert('Failed to connect wallet (WalletConnect): ' + (err.message || err));
       }
     }
-    function adminLogout(){
-      state.adminLoggedIn = false;
-      saveState();
-      renderAdminPanel();
-    }
 
-    // ── EVENT BINDING & INIT ──────────────────────────
-    window.addEventListener('DOMContentLoaded',()=>{
-      // Network toggle
-      document.querySelectorAll('.network-toggle button').forEach(b=>{
-        b.addEventListener('click',()=>{
-          state.network = b.dataset.net;
-          saveState();
-          renderNetworkToggle();
-          renderItems();
-          renderAdminPanel();
+    async function afterConnectChecks() {
+      // If wallet address is registered as a wallet-admin, mark admin session
+      if (app.address && app.admins[app.address] && app.admins[app.address].authType === 'wallet') {
+        app.isAdmin = true;
+        localStorage.setItem('adminSession', app.address); // persist admin session
+        showAdminUI();
+      }
+      // listen for account / chain changes (optional but helpful)
+      if (window.ethereum) {
+        window.ethereum.on && window.ethereum.on('accountsChanged', (accs) => {
+          if (!accs || accs.length === 0) { app.address = null; document.getElementById('walletDropdown').innerHTML = `<i class="bi bi-wallet2"></i> Connect Wallet`; saveState(); }
+          else { app.address = accs[0]; document.getElementById('walletDropdown').innerHTML = `<i class="bi bi-wallet2"></i> ${app.address.slice(0,6)}...${app.address.slice(-4)}`; saveState(); }
         });
-      });
-      renderNetworkToggle();
-
-      // Buy buttons
-      document.body.addEventListener('click',ev=>{
-        if(ev.target.classList.contains('buy')){
-          if(!state.walletAddress) return alert('Please connect wallet first');
-          const id = ev.target.dataset.id;
-          alert(`Would send tx to buy item #${id} on ${state.network}`);
-        }
-      });
-
-      // Wallet connect
-      document.getElementById('connectWalletBtn')
-        .addEventListener('click',connectWallet);
-      renderWalletBtn();
-
-      // Admin login flow
-      document.getElementById('adminLoginBtn')
-        .addEventListener('click',()=>{
-          new bootstrap.Modal(document.getElementById('adminModal')).show();
+        window.ethereum.on && window.ethereum.on('chainChanged', (chainId) => {
+          // No forced network change in UI; you can use chainId to prompt the user if needed
+          console.log('chainChanged', chainId);
         });
-      document.getElementById('adminForm')
-        .addEventListener('submit', tryAdminLogin);
-      document.getElementById('adminLogoutBtn')
-        .addEventListener('click', adminLogout);
-
-      // Render initial items & admin
+      }
       renderItems();
-      renderAdminPanel();
+    }
+
+    // ======= ADMIN LOGIN (CREDENTIALS + WALLET) =======
+    function checkAdminSessionOnLoad() {
+      const sess = localStorage.getItem('adminSession');
+      if (sess) {
+        // If session key matches a stored admin key, restore admin
+        if (app.admins[sess]) {
+          app.isAdmin = true;
+          app.address = (app.admins[sess].authType === 'wallet') ? sess : app.address;
+          showAdminUI();
+        } else {
+          localStorage.removeItem('adminSession');
+        }
+      }
+    }
+
+    function showAdminUI() {
+      document.getElementById('admin').style.display = 'block';
+      document.getElementById('adminNavLink').style.display = 'block';
+      updateAdminTable();
+    }
+
+    function hideAdminUI() {
+      document.getElementById('admin').style.display = 'none';
+      document.getElementById('adminNavLink').style.display = 'none';
+    }
+
+    // Credential-based admin login (modal form)
+    document.getElementById('adminLoginForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const username = document.getElementById('adminUsername').value;
+      const password = document.getElementById('adminPassword').value;
+
+      // find matching credential admin (authType === 'credentials' and username & password match)
+      let foundKey = null;
+      for (const key in app.admins) {
+        const a = app.admins[key];
+        if (a.authType === 'credentials' && a.username === username && a.password === password) {
+          foundKey = key;
+          break;
+        }
+      }
+      if (foundKey) {
+        app.isAdmin = true;
+        localStorage.setItem('adminSession', foundKey);
+        saveState();
+        showAdminUI();
+        // hide modal using bootstrap API
+        const modal = bootstrap.Modal.getInstance(document.getElementById('adminLoginModal'));
+        if (modal) modal.hide();
+        alert('Admin login successful');
+      } else {
+        alert('Invalid admin username or password');
+      }
     });
+
+    document.getElementById('adminLogout').addEventListener('click', function() {
+      app.isAdmin = false;
+      localStorage.removeItem('adminSession');
+      hideAdminUI();
+      saveState();
+      alert('Admin logged out');
+    });
+
+    // ======= ADMIN MANAGEMENT UI =======
+    function updateAdminTable() {
+      const tbody = document.getElementById('adminTableBody'); tbody.innerHTML = '';
+      for (const key in app.admins) {
+        const a = app.admins[key];
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${key}</td><td>${a.username}</td><td>${a.authType}</td>
+          <td><button class="btn btn-sm btn-danger remove-admin" data-key="${key}">Remove</button></td>`;
+        tbody.appendChild(tr);
+      }
+    }
+
+    document.getElementById('addAdminForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const key = document.getElementById('newAdminKey').value.trim() || document.getElementById('newAdminUsername').value.trim();
+      const uname = document.getElementById('newAdminUsername').value.trim();
+      const pass = document.getElementById('newAdminPass').value.trim();
+      if (!key || !uname || !pass) { alert('Provide key, username and password'); return; }
+      const authType = (key.startsWith('0x') && key.length > 10) ? 'wallet' : 'credentials';
+      if (app.admins[key]) { alert('Admin key already exists'); return; }
+      app.admins[key] = { username: uname, password: pass, authType };
+      updateAdminTable(); saveState(); this.reset(); alert('Admin added'); 
+    });
+
+    document.addEventListener('click', function(e) {
+      if (e.target.matches('.remove-admin')) {
+        const k = e.target.getAttribute('data-key');
+        if (confirm('Remove admin ' + k + '?')) {
+          delete app.admins[k];
+          updateAdminTable(); saveState();
+          if (localStorage.getItem('adminSession') === k) { localStorage.removeItem('adminSession'); hideAdminUI(); }
+        }
+      }
+      if (e.target.matches('.buy-btn')) {
+        if (!app.address) return alert('Please connect wallet first to buy');
+        const id = e.target.getAttribute('data-id');
+        alert('Buying item #' + id + ' (demo — no tx executed)');
+      }
+    });
+
+    // ======= NETWORK CONTROL (Admin buttons + public toggle) =======
+    document.querySelectorAll('.network-toggle-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        app.currentNetwork = btn.getAttribute('data-network');
+        renderItems(); saveState();
+      });
+    });
+    document.getElementById('activateTestnet').addEventListener('click', () => { app.currentNetwork = 'testnet'; renderItems(); saveState(); alert('Activated Testnet view'); });
+    document.getElementById('activateMainnet').addEventListener('click', () => {
+      if (!app.isAdmin) return alert('Only admin can switch mainnet activation');
+      if (!confirm('Make Mainnet active for the public?')) return;
+      app.currentNetwork = 'mainnet'; renderItems(); saveState(); alert('Activated Mainnet view');
+    });
+
+    // ======= NFT creation (demo) =======
+    document.getElementById('createNFTForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      if (!app.address) return alert('Please connect wallet before creating NFTs (demo requirement).');
+      const name = document.getElementById('nftName').value.trim();
+      const price = document.getElementById('nftPrice').value.trim();
+      const desc = document.getElementById('nftDesc').value.trim();
+      const network = document.getElementById('nftNetwork').value;
+      const item = { id: Date.now(), name, description: desc, image:`https://picsum.photos/seed/${Date.now()}/400/300.jpg`, price, category:'NFT', network };
+      if (network === 'testnet') app.testnetItems.push(item); else app.mainnetItems.push(item);
+      saveState();
+      if (app.currentNetwork === network) renderItems();
+      this.reset();
+      alert('NFT created (demo): ' + name);
+    });
+
+    // ======= INIT =======
+    function initBindings() {
+      document.getElementById('connectInjected').addEventListener('click', connectInjected);
+      document.getElementById('connectWC').addEventListener('click', connectWalletConnect);
+      loadState();
+      checkAdminSessionOnLoad();
+      renderItems();
+      updateAdminTable();
+    }
+
+    window.addEventListener('DOMContentLoaded', initBindings);
   </script>
 </body>
 </html>
