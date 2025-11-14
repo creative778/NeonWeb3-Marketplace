@@ -1,1291 +1,400 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NeonWeb3 Marketplace</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&display=swap" rel="stylesheet">
-    <style>
-        body {
-            background: #0d0d0d;
-            color: #0ff;
-            font-family: 'Orbitron', sans-serif;
-        }
-        .glass {
-            background: rgba(255,255,255,0.05);
-            border-radius: 20px;
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(255,255,255,0.1);
-            padding: 2rem;
-            margin: 2rem 0;
-        }
-        .neon-border {
-            border: 2px solid #0ff;
-            box-shadow: 0 0 15px #0ff;
-        }
-        @keyframes float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-            100% { transform: translateY(0px); }
-        }
-        .floating {
-            animation: float 6s infinite ease-in-out;
-        }
-        .gradient-bg {
-            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
-        }
-        .pulse {
-            animation: pulse 2s infinite;
-        }
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(0, 255, 255, 0.7); }
-            70% { box-shadow: 0 0 0 10px rgba(0, 255, 255, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(0, 255, 255, 0); }
-        }
-        .hover-scale {
-            transition: transform 0.3s ease;
-        }
-        .hover-scale:hover {
-            transform: scale(1.05);
-        }
-        .wallet-btn {
-            background: linear-gradient(45deg, #0ff, #0080ff);
-            border: none;
-            border-radius: 50px;
-            padding: 8px 20px;
-            font-weight: bold;
-            color: #0d0d0d;
-        }
-        .tab-content {
-            padding-top: 20px;
-        }
-        .nav-pills .nav-link.active {
-            background-color: #0ff;
-            color: #0d0d0d;
-        }
-        .nav-pills .nav-link {
-            color: #0ff;
-            border: 1px solid #0ff;
-            margin: 0 5px;
-        }
-        .notification-badge {
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            background: #ff3366;
-            color: white;
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-        }
-        .chart-container {
-            height: 300px;
-            margin: 20px 0;
-        }
-        .stake-card {
-            background: linear-gradient(135deg, rgba(0,255,255,0.1), rgba(0,128,255,0.1));
-            border-radius: 15px;
-            border: 1px solid rgba(0,255,255,0.3);
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-        .launchpad-timer {
-            font-size: 24px;
-            font-weight: bold;
-            text-align: center;
-            margin: 20px 0;
-        }
-        .network-indicator {
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-size: 0.8rem;
-            margin-left: 8px;
-        }
-        .testnet {
-            background-color: #ff9900;
-            color: #000;
-        }
-        .mainnet {
-            background-color: #00cc66;
-            color: #000;
-        }
-        .wallet-option {
-            cursor: pointer;
-            padding: 10px;
-            border-radius: 8px;
-            margin-bottom: 8px;
-            transition: all 0.2s;
-        }
-        .wallet-option:hover {
-            background-color: rgba(0,255,255,0.1);
-        }
-        .nft-card {
-            background: linear-gradient(135deg, rgba(0,255,255,0.1), rgba(0,128,255,0.1));
-            border-radius: 15px;
-            border: 1px solid rgba(0,255,255,0.3);
-            padding: 15px;
-            margin-bottom: 20px;
-            transition: all 0.3s;
-        }
-        .nft-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,255,255,0.2);
-        }
-        .nft-image {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-            border-radius: 10px;
-            margin-bottom: 15px;
-        }
-        .product-card {
-            background: linear-gradient(135deg, rgba(0,255,255,0.1), rgba(0,128,255,0.1));
-            border-radius: 15px;
-            border: 1px solid rgba(0,255,255,0.3);
-            padding: 20px;
-            margin-bottom: 20px;
-            transition: all 0.3s;
-        }
-        .product-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,255,255,0.2);
-        }
-        .product-image {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-            border-radius: 10px;
-            margin-bottom: 15px;
-        }
-        .network-toggle {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            z-index: 10;
-        }
-        .network-toggle-btn {
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-weight: bold;
-            transition: all 0.3s;
-        }
-        .network-toggle-btn.active {
-            background-color: #0ff;
-            color: #0d0d0d;
-        }
-        .network-toggle-btn.testnet.active {
-            background-color: #ff9900;
-            color: #000;
-        }
-        .network-toggle-btn.mainnet.active {
-            background-color: #00cc66;
-            color: #000;
-        }
-        .network-toggle-btn.disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-        .nft-creator {
-            background: rgba(0,255,255,0.1);
-            border-radius: 15px;
-            padding: 20px;
-            margin: 20px 0;
-            border: 1px solid rgba(0,255,255,0.3);
-        }
-        .network-badge {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            background: rgba(0,255,255,0.2);
-            padding: 3px 8px;
-            border-radius: 10px;
-            font-size: 0.8rem;
-        }
-        .testnet-badge {
-            background: rgba(255,153,0,0.2);
-        }
-        .mainnet-badge {
-            background: rgba(0,204,102,0.2);
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>NeonWeb3 Marketplace</title>
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css"
+    rel="stylesheet"
+  />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&display=swap"
+    rel="stylesheet"
+  />
+  <style>
+    body {
+      background: #0d0d0d;
+      color: #0ff;
+      font-family: "Orbitron", sans-serif;
+    }
+    .glass {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 20px;
+      backdrop-filter: blur(15px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 2rem;
+      margin: 2rem 0;
+    }
+    .neon-border {
+      border: 2px solid #0ff;
+      box-shadow: 0 0 15px #0ff;
+    }
+    .hover-scale {
+      transition: transform 0.3s ease;
+    }
+    .hover-scale:hover {
+      transform: scale(1.05);
+    }
+    .wallet-btn {
+      background: linear-gradient(45deg, #0ff, #0080ff);
+      border: none;
+      border-radius: 50px;
+      padding: 8px 20px;
+      font-weight: bold;
+      color: #0d0d0d;
+    }
+    .network-indicator {
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 0.8rem;
+      margin-left: 8px;
+    }
+    .testnet {
+      background-color: #ff9900;
+      color: #000;
+    }
+    .mainnet {
+      background-color: #00cc66;
+      color: #000;
+    }
+    .nft-card,
+    .product-card {
+      background: linear-gradient(
+        135deg,
+        rgba(0, 255, 255, 0.1),
+        rgba(0, 128, 255, 0.1)
+      );
+      border-radius: 15px;
+      border: 1px solid rgba(0, 255, 255, 0.3);
+      padding: 15px;
+      margin-bottom: 20px;
+      transition: all 0.3s;
+    }
+    .nft-card:hover,
+    .product-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0, 255, 255, 0.2);
+    }
+    .nft-image,
+    .product-image {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      border-radius: 10px;
+      margin-bottom: 15px;
+    }
+    .network-badge {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      padding: 3px 8px;
+      border-radius: 10px;
+      font-size: 0.8rem;
+    }
+    .testnet-badge {
+      background: rgba(255, 153, 0, 0.2);
+    }
+    .mainnet-badge {
+      background: rgba(0, 204, 102, 0.2);
+    }
+    .network-toggle {
+      position: fixed;
+      top: 80px;
+      right: 20px;
+      z-index: 1000;
+    }
+    .network-toggle-btn {
+      margin: 0 2px;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .network-toggle-btn.active {
+      box-shadow: 0 0 10px #0ff;
+    }
+  </style>
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
-        <div class="container">
-            <a class="navbar-brand" href="#"><i class="bi bi-coin"></i> NeonWeb3</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#"><i class="bi bi-coin"></i> NeonWeb3</a>
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-bs-toggle="collapse"
+        data-bs-target="#navMenu"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navMenu">
+        <ul class="navbar-nav ms-auto align-items-center">
+          <li class="nav-item"><a class="nav-link" href="#nft">NFTs</a></li>
+          <li class="nav-item"><a class="nav-link" href="#products">Products</a></li>
+          <li class="nav-item ms-3">
+            <button
+              class="wallet-btn"
+              id="connectWalletBtn"
+            >
+              <i class="bi bi-wallet2"></i> Connect Wallet
             </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" href="#nft">NFTs</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#products">Products</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#dao">DAO</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#crypto">Crypto</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#defi">DeFi</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#launchpad">Launchpad</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#gaming">Gaming</a></li>
-                    <li class="nav-item position-relative">
-                        <a class="nav-link" href="#notifications">
-                            <i class="bi bi-bell"></i>
-                            <span class="notification-badge">3</span>
-                        </a>
-                    </li>
-                    <li class="nav-item dropdown ms-3">
-                        <button class="btn wallet-btn dropdown-toggle" type="button" id="walletDropdown" data-bs-toggle="dropdown">
-                            <i class="bi bi-wallet2"></i> Connect Wallet
-                        </button>
-                        <ul class="dropdown-menu dropdown-menu-dark">
-                            <li><h6 class="dropdown-header">Select Network</h6></li>
-                            <li>
-                                <button class="dropdown-item network-option" data-network="mainnet">
-                                    <span class="network-indicator mainnet">Mainnet</span>
-                                </button>
-                            </li>
-                            <li>
-                                <button class="dropdown-item network-option" data-network="testnet">
-                                    <span class="network-indicator testnet">Testnet</span>
-                                </button>
-                            </li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><h6 class="dropdown-header">Select Wallet</h6></li>
-                            <li><div class="wallet-option" data-wallet="metamask"><i class="bi bi-wallet2"></i> MetaMask</div></li>
-                            <li><div class="wallet-option" data-wallet="rabby"><i class="bi bi-shield-check"></i> Rabby Wallet</div></li>
-                            <li><div class="wallet-option" data-wallet="walletconnect"><i class="bi bi-wifi"></i> WalletConnect</div></li>
-                            <li><div class="wallet-option" data-wallet="coinbase"><i class="bi bi-coin"></i> Coinbase Wallet</div></li>
-                            <li><div class="wallet-option" data-wallet="trustwallet"><i class="bi bi-shield-check"></i> Trust Wallet</div></li>
-                            <li><div class="wallet-option" data-wallet="brave"><i class="bi bi-shield-fill"></i> Brave Wallet</div></li>
-                            <li><div class="wallet-option" data-wallet="bybit"><i class="bi bi-currency-exchange"></i> Bybit Wallet</div></li>
-                            <li><div class="wallet-option" data-wallet="bitget"><i class="bi bi-currency-bitcoin"></i> Bitget Wallet</div></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item ms-3">
-                        <button class="wallet-btn" id="connectWallet" style="display:none;">
-                            <i class="bi bi-wallet2"></i> Connect Wallet
-                        </button>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Network Toggle -->
-    <div class="network-toggle">
-        <button class="network-toggle-btn testnet active" data-network="testnet">Testnet</button>
-        <button class="network-toggle-btn mainnet" data-network="mainnet">Mainnet</button>
+          </li>
+        </ul>
+      </div>
     </div>
+  </nav>
 
-    <!-- NFT Section -->
-    <section id="nft" class="glass">
-        <div class="container">
-            <h2 class="text-center mb-4"><i class="bi bi-image"></i> NFT Marketplace</h2>
-            
-            <!-- NFT Creator -->
-            <div class="nft-creator glass neon-border">
-                <h3>Create New NFT</h3>
-                <form id="createNFTForm">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label class="form-label">NFT Name</label>
-                                <input type="text" class="form-control" id="nftName" required>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label class="form-label">Description</label>
-                                <input type="text" class="form-control" id="nftDescription" required>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label class="form-label">Price (ETH)</label>
-                                <input type="number" step="0.01" class="form-control" id="nftPrice" required>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label class="form-label">Network</label>
-                                <select class="form-select" id="nftNetwork">
-                                    <option value="testnet" selected>Testnet</option>
-                                    <option value="mainnet">Mainnet</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Upload Image</label>
-                        <input class="form-control" type="file" id="nftImage" accept="image/*" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary w-100">Create NFT</button>
-                </form>
-            </div>
+  <!-- Network Toggle -->
+  <div class="network-toggle">
+    <span
+      class="network-toggle-btn testnet active"
+      data-network="testnet"
+      >Testnet</span
+    >
+    <span class="network-toggle-btn mainnet" data-network="mainnet"
+      >Mainnet</span
+    >
+  </div>
 
-            <div class="row" id="nftContainer">
-                <!-- NFT items will be dynamically loaded here -->
-            </div>
-        </div>
-    </section>
-
-    <!-- Products Section -->
-    <section id="products" class="glass">
-        <div class="container">
-            <h2 class="text-center mb-4"><i class="bi bi-bag"></i> Products</h2>
-            <div class="row" id="productsContainer">
-                <!-- Product items will be dynamically loaded here -->
-            </div>
-        </div>
-    </section>
-
-    <!-- Admin Login Modal -->
-    <div class="modal fade" id="adminLoginModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content glass neon-border">
-                <div class="modal-header">
-                    <h5 class="modal-title">Admin Login</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="adminLoginForm">
-                        <div class="mb-3">
-                            <label class="form-label">Username</label>
-                            <input type="text" class="form-control" id="adminUsername" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Password</label>
-                            <input type="password" class="form-control" id="adminPassword" required>
-                        </div>
-                        <button type="submit" class="btn btn-primary w-100">Login</button>
-                    </form>
-                </div>
-            </div>
-        </div>
+  <!-- NFT Section -->
+  <section id="nft" class="glass position-relative">
+    <div class="container">
+      <h2 class="text-center mb-4"><i class="bi bi-image"></i> NFT Marketplace</h2>
+      <div class="row" id="nftContainer"></div>
     </div>
+  </section>
 
-    <!-- Admin Panel Section -->
-    <section id="admin" class="glass" style="display: none;">
-        <div class="container">
-            <h2 class="text-center mb-4"><i class="bi bi-shield-lock"></i> Admin Dashboard</h2>
-            
-            <!-- Admin Navigation -->
-            <ul class="nav nav-pills mb-4 justify-content-center">
-                <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#networkControl">Network Control</button></li>
-                <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#userManagement">User Management</button></li>
-                <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#contentModeration">Content Moderation</button></li>
-                <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#adminManagement">Admin Management</button></li>
-                <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#passwordChange">Change Password</button></li>
-            </ul>
+  <!-- Products Section -->
+  <section id="products" class="glass position-relative">
+    <div class="container">
+      <h2 class="text-center mb-4"><i class="bi bi-bag"></i> Products</h2>
+      <div class="row" id="productsContainer"></div>
+    </div>
+  </section>
 
-            <!-- Admin Tabs Content -->
-            <div class="tab-content">
-                <!-- Network Control -->
-                <div class="tab-pane fade show active" id="networkControl">
-                    <div class="card neon-border mb-3">
-                        <div class="card-body">
-                            <h5 class="card-title">Network Status</h5>
-                            <div class="d-flex justify-content-center mb-4">
-                                <div class="form-group">
-                                    <label for="networkToggle" class="form-label">Current Network Status</label>
-                                    <div class="d-flex align-items-center">
-                                        <span class="me-3">Testnet:</span>
-                                        <div class="form-check form-switch">
-                                            <input class="form-check-input" type="checkbox" id="testnetToggle" checked>
-                                        </div>
-                                    </div>
-                                    <div class="d-flex align-items-center mt-2">
-                                        <span class="me-3">Mainnet:</span>
-                                        <div class="form-check form-switch">
-                                            <input class="form-check-input" type="checkbox" id="mainnetToggle">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <h5 class="card-title mt-4">Network Configuration</h5>
-                            <div class="table-responsive">
-                                <table class="table table-dark">
-                                    <thead>
-                                        <tr>
-                                            <th>Network</th>
-                                            <th>RPC URL</th>
-                                            <th>Explorer</th>
-                                            <th>Status</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>Testnet</td>
-                                            <td>https://rpc.testnet.eth.example</td>
-                                            <td>https://testnet-explorer.eth.example</td>
-                                            <td><span class="badge bg-success">Active</span></td>
-                                        </tr>
-                                        <tr>
-                                            <td>Mainnet</td>
-                                            <td>https://rpc.mainnet.eth.example</td>
-                                            <td>https://mainnet-explorer.eth.example</td>
-                                            <td><span class="badge bg-secondary">Inactive</span></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                            
-                            <div class="mt-4">
-                                <button class="btn btn-success me-2" id="activateTestnet">Activate Testnet</button>
-                                <button class="btn btn-primary" id="activateMainnet">Activate Mainnet</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+  <footer class="text-center glass py-4">
+    <p>&copy; 2025 NeonWeb3 Marketplace. Built on Ethereum.</p>
+  </footer>
 
-                <!-- User Management -->
-                <div class="tab-pane fade" id="userManagement">
-                    <div class="card neon-border mb-3">
-                        <div class="card-body">
-                            <h5 class="card-title">User Accounts</h5>
-                            <div class="table-responsive">
-                                <table class="table table-dark">
-                                    <thead>
-                                        <tr>
-                                            <th>Wallet Address</th>
-                                            <th>Status</th>
-                                            <th>Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="userTableBody">
-                                        <tr>
-                                            <td>0x123...abc</td>
-                                            <td><span class="badge bg-success">Active</span></td>
-                                            <td>
-                                                <button class="btn btn-sm btn-danger">Suspend</button>
-                                                <button class="btn btn-sm btn-success">Approve</button>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@walletconnect/web3-provider@1.8.0/dist/umd/index.min.js"></script>
 
-                <!-- Content Moderation -->
-                <div class="tab-pane fade" id="contentModeration">
-                    <div class="card neon-border mb-3">
-                        <div class="card-body">
-                            <h5 class="card-title">Pending Listings</h5>
-                            <div class="table-responsive">
-                                <table class="table table-dark">
-                                    <thead>
-                                        <tr>
-                                            <th>Item</th>
-                                            <th>Category</th>
-                                            <th>Network</th>
-                                            <th>Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="contentTableBody">
-                                        <tr>
-                                            <td>Cosmic Dreams #001</td>
-                                            <td>NFT</td>
-                                            <td>Testnet</td>
-                                            <td>
-                                                <button class="btn btn-sm btn-success">Approve</button>
-                                                <button class="btn btn-sm btn-danger">Reject</button>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+  <script>
+    // -------------------------
+    // App State & Sample Data
+    // -------------------------
+    const appState = {
+      currentNetwork: "testnet",
+      provider: null,
+      signer: null,
+      address: null,
+      testnetItems: [
+        {
+          id: 1,
+          name: "Cosmic Dreams #001",
+          description: "A beautiful cosmic NFT",
+          image: "https://picsum.photos/seed/cosmic1/400/300.jpg",
+          price: "0.05",
+          category: "NFT",
+          network: "testnet",
+        },
+        {
+          id: 2,
+          name: "Legendary Sword",
+          description: "Powerful gaming sword",
+          image: "https://picsum.photos/seed/sword/400/300.jpg",
+          price: "0.12",
+          category: "Product",
+          network: "testnet",
+        },
+      ],
+      mainnetItems: [
+        {
+          id: 101,
+          name: "Premium NFT #101",
+          description: "Exclusive mainnet collectible",
+          image: "https://picsum.photos/seed/premium1/400/300.jpg",
+          price: "1.0",
+          category: "NFT",
+          network: "mainnet",
+        },
+        {
+          id: 102,
+          name: "Luxury Virtual Estate",
+          description: "High-end property",
+          image: "https://picsum.photos/seed/estate/400/300.jpg",
+          price: "5.0",
+          category: "Product",
+          network: "mainnet",
+        },
+      ],
+    };
 
-                <!-- Admin Management -->
-                <div class="tab-pane fade" id="adminManagement">
-                    <div class="card neon-border mb-3">
-                        <div class="card-body">
-                            <h5 class="card-title">Admin Management</h5>
-                            <div class="mb-4">
-                                <h6>Add New Admin</h6>
-                                <form id="addAdminForm">
-                                    <div class="mb-3">
-                                        <label class="form-label">Wallet Address</label>
-                                        <input type="text" class="form-control" id="newAdminAddress" placeholder="0x..." required>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="form-label">Username</label>
-                                        <input type="text" class="form-control" id="newAdminUsername" required>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="form-label">Password</label>
-                                        <input type="password" class="form-control" id="newAdminPassword" required>
-                                    </div>
-                                    <button type="submit" class="btn btn-primary">Add Admin</button>
-                                </form>
-                            </div>
-                            <h6>Current Admins</h6>
-                            <div class="table-responsive">
-                                <table class="table table-dark">
-                                    <thead>
-                                        <tr>
-                                            <th>Wallet Address</th>
-                                            <th>Username</th>
-                                            <th>Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="adminTableBody">
-                                        <tr>
-                                            <td>0x093a810238E5C65B5bC33FC11237992B5C84562c</td>
-                                            <td>Super Admin</td>
-                                            <td>
-                                                <button class="btn btn-sm btn-warning">Reset Password</button>
-                                                <button class="btn btn-sm btn-danger">Remove</button>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+    // -------------------------
+    // UTILITIES
+    // -------------------------
+    function saveNetworkChoice() {
+      localStorage.setItem("nw_choice", appState.currentNetwork);
+    }
 
-                <!-- Password Change -->
-                <div class="tab-pane fade" id="passwordChange">
-                    <div class="card neon-border mb-3">
-                        <div class="card-body">
-                            <h5 class="card-title">Change Admin Password</h5>
-                            <form id="changePasswordForm">
-                                <div class="mb-3">
-                                    <label class="form-label">Current Password</label>
-                                    <input type="password" class="form-control" id="currentPassword" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label">New Password</label>
-                                    <input type="password" class="form-control" id="newPassword" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Confirm Password</label>
-                                    <input type="password" class="form-control" id="confirmPassword" required>
-                                </div>
-                                <button type="submit" class="btn btn-primary w-100">Update Password</button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    function loadNetworkChoice() {
+      const nw = localStorage.getItem("nw_choice");
+      if (nw === "mainnet" || nw === "testnet") {
+        appState.currentNetwork = nw;
+      }
+    }
 
-            <div class="text-center mt-4">
-                <button class="btn btn-outline-light" id="adminLogout">Logout</button>
-            </div>
+    // -------------------------
+    // RENDERING
+    // -------------------------
+    function renderItems() {
+      const all =
+        appState.currentNetwork === "testnet"
+          ? appState.testnetItems
+          : appState.mainnetItems;
+      const nfts = all.filter((i) => i.category === "NFT");
+      const prods = all.filter((i) => i.category === "Product");
+
+      const nftC = document.getElementById("nftContainer");
+      const prodC = document.getElementById("productsContainer");
+      nftC.innerHTML = "";
+      prodC.innerHTML = "";
+
+      nfts.forEach((i) => nftC.appendChild(makeCard(i)));
+      prods.forEach((i) => prodC.appendChild(makeCard(i)));
+    }
+
+    function makeCard(item) {
+      const col = document.createElement("div");
+      col.className = "col-md-4 mb-4 position-relative";
+      col.innerHTML = `
+        <span class="network-badge ${
+          item.network === "testnet" ? "testnet-badge" : "mainnet-badge"
+        }">${item.network}</span>
+        <div class="${item.category.toLowerCase()}-card">
+          <img src="${item.image}" class="${
+        item.category.toLowerCase()
+      }-image" />
+          <h5>${item.name}</h5>
+          <p>${item.description}</p>
+          <div class="d-flex justify-content-between align-items-center">
+            <span>${item.price} ETH</span>
+            <button class="btn btn-primary hover-scale buy-btn" data-id="${
+              item.id
+            }">Buy</button>
+          </div>
         </div>
-    </section>
+      `;
+      return col;
+    }
 
-    <!-- Footer -->
-    <footer class="text-center glass py-4">
-        <p>&copy; 2025 NeonWeb3 Marketplace. Built on Ethereum.</p>
-        <div>
-            <a href="https://github.com" class="text-light me-3"><i class="bi bi-github"></i></a>
-            <a href="https://twitter.com" class="text-light me-3"><i class="bi bi-twitter"></i></a>
-            <a href="https://discord.com" class="text-light me-3"><i class="bi bi-discord"></i></a>
-            <a href="https://telegram.org" class="text-light"><i class="bi bi-telegram"></i></a>
-        </div>
-    </footer>
+    // -------------------------
+    // WALLET CONNECTION
+    // -------------------------
+    async function connectWallet(type) {
+      try {
+        if (type === "walletconnect") {
+          // WALLETCONNECT → Ethers provider
+          const wcProvider = new WalletConnectProvider.default({
+            infuraId: "YOUR_INFURA_ID", // ← replace with your Infura ID
+          });
+          await wcProvider.enable();
+          appState.provider = new ethers.providers.Web3Provider(wcProvider);
+        } else {
+          // ANY injected wallet (MetaMask, Rabby, Bybit, Bitget, etc.)
+          if (!window.ethereum)
+            throw new Error("No injected wallet found in your browser");
+          appState.provider = new ethers.providers.Web3Provider(
+            window.ethereum,
+            "any"
+          );
+          // request access
+          await window.ethereum.request({
+            method: "eth_requestAccounts",
+          });
+        }
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@walletconnect/web3-provider@1.8.0/dist/umd/index.min.js"></script>
-    <script>
-        // App state
-        let appState = {
-            currentNetwork: 'testnet', // Default to testnet
-            connectedWallet: null,
-            connectedAddress: null,
-            isAdmin: false,
-            adminCredentials: {},
-            admins: {
-                "0x093a810238E5C65B5bC33FC11237992B5C84562c": {
-                    username: "Super Admin",
-                    password: "admin123"
-                }
-            },
-            testnetProducts: [
-                {
-                    id: 1,
-                    name: "Cosmic Dreams #001",
-                    description: "A beautiful cosmic NFT from our exclusive collection",
-                    image: "https://picsum.photos/seed/cosmic1/400/300.jpg",
-                    price: "0.05",
-                    category: "NFT",
-                    network: "testnet"
-                },
-                {
-                    id: 2,
-                    name: "Digital Art #042",
-                    description: "Unique digital artwork from a renowned artist",
-                    image: "https://picsum.photos/seed/art42/400/300.jpg",
-                    price: "0.08",
-                    category: "NFT",
-                    network: "testnet"
-                },
-                {
-                    id: 3,
-                    name: "Gaming Item - Legendary Sword",
-                    description: "A powerful sword for your gaming adventures",
-                    image: "https://picsum.photos/seed/sword/400/300.jpg",
-                    price: "0.12",
-                    category: "Gaming",
-                    network: "testnet"
-                },
-                {
-                    id: 4,
-                    name: "Music NFT - Beat Collection",
-                    description: "Exclusive beats from top producers",
-                    image: "https://picsum.photos/seed/music/400/300.jpg",
-                    price: "0.03",
-                    category: "Music",
-                    network: "testnet"
-                },
-                {
-                    id: 5,
-                    name: "Virtual Land - Plot #78",
-                    description: "Prime virtual real estate in the metaverse",
-                    image: "https://picsum.photos/seed/land78/400/300.jpg",
-                    price: "0.25",
-                    category: "Virtual Land",
-                    network: "testnet"
-                }
-            ],
-            mainnetProducts: [
-                {
-                    id: 6,
-                    name: "Premium Collection #001",
-                    description: "Exclusive NFT collection for mainnet users",
-                    image: "https://picsum.photos/seed/premium1/400/300.jpg",
-                    price: "1.0",
-                    category: "NFT",
-                    network: "mainnet"
-                },
-                {
-                    id: 7,
-                    name: "Luxury Virtual Estate",
-                    description: "High-end virtual property in the mainnet metaverse",
-                    image: "https://picsum.photos/seed/luxuryestate/400/300.jpg",
-                    price: "5.0",
-                    category: "Virtual Land",
-                    network: "mainnet"
-                }
-            ]
-        };
+        appState.signer = appState.provider.getSigner();
+        appState.address = await appState.signer.getAddress();
 
-        // Initialize app
-        document.addEventListener('DOMContentLoaded', function() {
-            // Load saved state
-            loadState();
-            
-            // Check if admin is logged in
-            checkAdminStatus();
-            
-            // Load products
-            loadProducts();
-            
-            // Set up event listeners
-            setupEventListeners();
-            
-            // Initialize network toggle
-            initNetworkToggle();
+        // update UI
+        document.getElementById(
+          "connectWalletBtn"
+        ).innerHTML = `<i class="bi bi-wallet2"></i> ${appState.address.slice(
+          0,
+          6
+        )}...${appState.address.slice(-4)}`;
+
+        renderItems();
+      } catch (err) {
+        console.error(err);
+        alert("Failed to connect wallet. " + err.message);
+      }
+    }
+
+    // -------------------------
+    // NETWORK TOGGLE
+    // -------------------------
+    function setupNetworkToggle() {
+      loadNetworkChoice();
+      document
+        .querySelectorAll(".network-toggle-btn")
+        .forEach((btn) => {
+          const nw = btn.getAttribute("data-network");
+          btn.classList.toggle("active", nw === appState.currentNetwork);
+          btn.addEventListener("click", () => {
+            appState.currentNetwork = nw;
+            saveNetworkChoice();
+            document
+              .querySelectorAll(".network-toggle-btn")
+              .forEach((b) => b.classList.remove("active"));
+            btn.classList.add("active");
+            renderItems();
+          });
         });
+    }
 
-        // Load state from localStorage
-        function loadState() {
-            const savedState = localStorage.getItem('neonWeb3State');
-            if (savedState) {
-                const parsedState = JSON.parse(savedState);
-                appState.currentNetwork = parsedState.currentNetwork || 'testnet';
-                appState.connectedWallet = parsedState.connectedWallet || null;
-                appState.connectedAddress = parsedState.connectedAddress || null;
-                appState.isAdmin = parsedState.isAdmin || false;
-                appState.adminCredentials = parsedState.adminCredentials || {};
-                appState.admins = parsedState.admins || appState.admins;
-                appState.testnetProducts = parsedState.testnetProducts || appState.testnetProducts;
-                appState.mainnetProducts = parsedState.mainnetProducts || appState.mainnetProducts;
-            }
+    // -------------------------
+    // BUY BUTTON
+    // -------------------------
+    document.addEventListener("click", (e) => {
+      if (e.target.classList.contains("buy-btn")) {
+        if (!appState.address) {
+          return alert("Please connect wallet first");
         }
+        const id = e.target.getAttribute("data-id");
+        alert(
+          `Pretend we're sending a tx to purchase item #${id} on ${appState.currentNetwork}`
+        );
+      }
+    });
 
-        // Save state to localStorage
-        function saveState() {
-            const stateToSave = {
-                currentNetwork: appState.currentNetwork,
-                connectedWallet: appState.connectedWallet,
-                connectedAddress: appState.connectedAddress,
-                isAdmin: appState.isAdmin,
-                adminCredentials: appState.adminCredentials,
-                admins: appState.admins,
-                testnetProducts: appState.testnetProducts,
-                mainnetProducts: appState.mainnetProducts
-            };
-            localStorage.setItem('neonWeb3State', JSON.stringify(stateToSave));
-        }
+    // -------------------------
+    // BOOTSTRAP EVENT HANDLERS
+    // -------------------------
+    document
+      .getElementById("connectWalletBtn")
+      .addEventListener("click", () =>
+        connectWallet("injected")
+      ); /* treat all injected wallets the same */
+    // if you want walletconnect option:
+    // document.getElementById('someWCBtn').addEventListener('click', ()=>connectWallet('walletconnect'))
 
-        // Check if admin is logged in
-        function checkAdminStatus() {
-            if (appState.connectedAddress && appState.admins[appState.connectedAddress]) {
-                appState.isAdmin = true;
-                showAdminPanel();
-            }
-        }
-
-        // Load products based on network
-        function loadProducts() {
-            const nftContainer = document.getElementById('nftContainer');
-            const productsContainer = document.getElementById('productsContainer');
-            
-            // Clear existing content
-            nftContainer.innerHTML = '';
-            productsContainer.innerHTML = '';
-            
-            // Get products for current network
-            const allProducts = [...appState.testnetProducts, ...appState.mainnetProducts];
-            const currentNetworkProducts = allProducts.filter(product => product.network === appState.currentNetwork);
-            
-            // Filter products by category
-            const nfts = currentNetworkProducts.filter(product => product.category === 'NFT');
-            const otherProducts = currentNetworkProducts.filter(product => product.category !== 'NFT');
-            
-            // Load NFTs
-            nfts.forEach(nft => {
-                const nftCard = createNFTCard(nft);
-                nftContainer.appendChild(nftCard);
-            });
-            
-            // Load other products
-            otherProducts.forEach(product => {
-                const productCard = createProductCard(product);
-                productsContainer.appendChild(productCard);
-            });
-        }
-
-        // Create NFT card
-        function createNFTCard(nft) {
-            const col = document.createElement('div');
-            col.className = 'col-md-4 mb-4';
-            
-            col.innerHTML = `
-                <div class="nft-card">
-                    <span class="network-badge ${nft.network === 'testnet' ? 'testnet-badge' : 'mainnet-badge'}">${nft.network === 'testnet' ? 'Testnet' : 'Mainnet'}</span>
-                    <img src="${nft.image}" class="nft-image" alt="${nft.name}">
-                    <h5>${nft.name}</h5>
-                    <p>${nft.description}</p>
-                    <div class="d-flex justify-content-between align-items-center">
-                        <span>${nft.price} ETH</span>
-                        <button class="btn btn-primary hover-scale buy-nft" data-id="${nft.id}" data-network="${nft.network}">Buy Now</button>
-                    </div>
-                </div>
-            `;
-            
-            return col;
-        }
-
-        // Create product card
-        function createProductCard(product) {
-            const col = document.createElement('div');
-            col.className = 'col-md-4 mb-4';
-            
-            col.innerHTML = `
-                <div class="product-card">
-                    <span class="network-badge ${product.network === 'testnet' ? 'testnet-badge' : 'mainnet-badge'}">${product.network === 'testnet' ? 'Testnet' : 'Mainnet'}</span>
-                    <img src="${product.image}" class="product-image" alt="${product.name}">
-                    <h5>${product.name}</h5>
-                    <p>${product.description}</p>
-                    <div class="d-flex justify-content-between align-items-center">
-                        <span>${product.price} ETH</span>
-                        <button class="btn btn-primary hover-scale buy-product" data-id="${product.id}" data-network="${product.network}">Buy Now</button>
-                    </div>
-                </div>
-            `;
-            
-            return col;
-        }
-
-        // Set up event listeners
-        function setupEventListeners() {
-            // Network selection
-            document.querySelectorAll('.network-option').forEach(option => {
-                option.addEventListener('click', function() {
-                    appState.currentNetwork = this.getAttribute('data-network');
-                    updateNetworkIndicator();
-                    saveState();
-                    loadProducts(); // Reload products for the selected network
-                    
-                    // Update network toggle
-                    document.querySelector('.network-toggle-btn.testnet').classList.toggle('active', appState.currentNetwork === 'testnet');
-                    document.querySelector('.network-toggle-btn.mainnet').classList.toggle('active', appState.currentNetwork === 'mainnet');
-                });
-            });
-
-            // Network toggle buttons
-            document.querySelectorAll('.network-toggle-btn').forEach(button => {
-                button.addEventListener('click', function() {
-                    const network = this.getAttribute('data-network');
-                    appState.currentNetwork = network;
-                    
-                    // Update UI
-                    document.querySelectorAll('.network-toggle-btn').forEach(btn => {
-                        btn.classList.remove('active');
-                    });
-                    this.classList.add('active');
-                    
-                    updateNetworkIndicator();
-                    saveState();
-                    loadProducts();
-                });
-            });
-
-            // Wallet selection
-            document.querySelectorAll('.wallet-option').forEach(option => {
-                option.addEventListener('click', function() {
-                    const walletType = this.getAttribute('data-wallet');
-                    connectWallet(walletType);
-                });
-            });
-
-            // Connect wallet button
-            document.getElementById('connectWallet').addEventListener('click', function() {
-                // If connected, show wallet info
-                if (appState.connectedAddress) {
-                    this.innerHTML = `<i class="bi bi-wallet2"></i> ${appState.connectedAddress.substring(0, 6)}...${appState.connectedAddress.substring(appState.connectedAddress.length - 4)}`;
-                } else {
-                    // Show wallet selection dropdown
-                    document.getElementById('walletDropdown').click();
-                }
-            });
-
-            // Admin login form
-            document.getElementById('adminLoginForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                const username = document.getElementById('adminUsername').value;
-                const password = document.getElementById('adminPassword').value;
-
-                // Check if credentials match any admin
-                let adminFound = false;
-                for (const [address, admin] of Object.entries(appState.admins)) {
-                    if (admin.username === username && admin.password === password) {
-                        appState.isAdmin = true;
-                        appState.connectedAddress = address;
-                        adminFound = true;
-                        break;
-                    }
-                }
-
-                if (adminFound) {
-                    saveState();
-                    showAdminPanel();
-                    $('#adminLoginModal').modal('hide');
-                } else {
-                    alert('Invalid credentials');
-                }
-            });
-
-            // Add admin form
-            document.getElementById('addAdminForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                const address = document.getElementById('newAdminAddress').value;
-                const username = document.getElementById('newAdminUsername').value;
-                const password = document.getElementById('newAdminPassword').value;
-
-                // Add to admins
-                appState.admins[address] = {
-                    username: username,
-                    password: password
-                };
-
-                // Update admin table
-                updateAdminTable();
-                
-                // Save state
-                saveState();
-                
-                // Reset form
-                this.reset();
-                
-                alert('Admin added successfully');
-            });
-
-            // Password change form
-            document.getElementById('changePasswordForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                const current = document.getElementById('currentPassword').value;
-                const newPass = document.getElementById('newPassword').value;
-                const confirm = document.getElementById('confirmPassword').value;
-
-                if (!appState.connectedAddress || !appState.admins[appState.connectedAddress]) {
-                    alert('You must be logged in as admin');
-                    return;
-                }
-
-                if (current !== appState.admins[appState.connectedAddress].password) {
-                    alert('Current password is incorrect');
-                    return;
-                }
-
-                if (newPass !== confirm) {
-                    alert('Passwords do not match');
-                    return;
-                }
-
-                appState.admins[appState.connectedAddress].password = newPass;
-                saveState();
-                alert('Password updated successfully');
-            });
-
-            // Admin logout
-            document.getElementById('adminLogout').addEventListener('click', function() {
-                appState.isAdmin = false;
-                document.getElementById('admin').style.display = 'none';
-                document.querySelector('.navbar-nav .nav-link[href="#admin"]')?.remove();
-                saveState();
-            });
-
-            // Network control buttons
-            document.getElementById('activateTestnet').addEventListener('click', function() {
-                appState.currentNetwork = 'testnet';
-                document.getElementById('testnetToggle').checked = true;
-                document.getElementById('mainnetToggle').checked = false;
-                updateNetworkIndicator();
-                saveState();
-                loadProducts();
-                alert('Testnet activated!');
-            });
-
-            document.getElementById('activateMainnet').addEventListener('click', function() {
-                if (confirm('Are you sure you want to activate Mainnet? This will make the site live on the main Ethereum network.')) {
-                    appState.currentNetwork = 'mainnet';
-                    document.getElementById('testnetToggle').checked = false;
-                    document.getElementById('mainnetToggle').checked = true;
-                    updateNetworkIndicator();
-                    saveState();
-                    loadProducts();
-                    alert('Mainnet activated!');
-                }
-            });
-
-            // Create NFT form
-            document.getElementById('createNFTForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                if (!appState.connectedAddress) {
-                    alert('Please connect your wallet first');
-                    return;
-                }
-                
-                const name = document.getElementById('nftName').value;
-                const description = document.getElementById('nftDescription').value;
-                const price = document.getElementById('nftPrice').value;
-                const network = document.getElementById('nftNetwork').value;
-                const imageFile = document.getElementById('nftImage').files[0];
-                
-                if (!imageFile) {
-                    alert('Please select an image file');
-                    return;
-                }
-                
-                // In a real app, you would upload the image to IPFS or a storage service
-                // For this demo, we'll use a placeholder URL
-                const imageUrl = URL.createObjectURL(imageFile);
-                
-                // Create new NFT
-                const newNft = {
-                    id: Date.now(), // Unique ID
-                    name: name,
-                    description: description,
-                    image: imageUrl,
-                    price: price,
-                    category: 'NFT',
-                    network: network,
-                    owner: appState.connectedAddress
-                };
-                
-                // Add to appropriate network array
-                if (network === 'testnet') {
-                    appState.testnetProducts.push(newNft);
-                } else {
-                    appState.mainnetProducts.push(newNft);
-                }
-                
-                // Save state
-                saveState();
-                
-                // Reload products
-                loadProducts();
-                
-                // Reset form
-                this.reset();
-                
-                alert('NFT created successfully!');
-            });
-
-            // Buy NFT/Product buttons
-            document.addEventListener('click', function(e) {
-                if (e.target.classList.contains('buy-nft') || e.target.classList.contains('buy-product')) {
-                    if (!appState.connectedAddress) {
-                        alert('Please connect your wallet first');
-                        return;
-                    }
-                    
-                    const id = e.target.getAttribute('data-id');
-                    const network = e.target.getAttribute('data-network');
-                    
-                    alert(`Purchasing item #${id} on ${network} network. In a real application, this would trigger a transaction.`);
-                    
-                    // In a real app, you would initiate a transaction here
-                }
-            });
-        }
-
-        // Connect wallet function
-        async function connectWallet(walletType) {
-            try {
-                let provider;
-                
-                switch(walletType) {
-                    case 'metamask':
-                        if (window.ethereum) {
-                            provider = new ethers.providers.Web3Provider(window.ethereum);
-                            await provider.send("eth_requestAccounts", []);
-                        } else {
-                            alert('MetaMask is not installed. Please install it to continue.');
-                            return;
-                        }
-                        break;
-                        
-                    case 'rabby':
-                        if (window.ethereum && window.ethereum.isRabby) {
-                            provider = new ethers.providers.Web3Provider(window.ethereum);
-                            await provider.send("eth_requestAccounts", []);
-                        } else {
-                            alert('Rabby Wallet is not installed. Please install it to continue.');
-                            return;
-                        }
-                        break;
-                        
-                    case 'walletconnect':
-                        provider = new WalletConnectProvider.default({
-                            infuraId: "YOUR_INFURA_ID", // Replace with your Infura ID
-                        });
-                        await provider.enable();
-                        break;
-                        
-                    case 'coinbase':
-                        if (window.ethereum && window.ethereum.isCoinbaseWallet) {
-                            provider = new ethers.providers.Web3Provider(window.ethereum);
-                            await provider.send("eth_requestAccounts", []);
-                        } else {
-                            alert('Coinbase Wallet is not installed. Please install it to continue.');
-                            return;
-                        }
-                        break;
-                        
-                    case 'trustwallet':
-                        if (window.ethereum && window.ethereum.isTrustWallet) {
-                            provider = new ethers.providers.Web3Provider(window.ethereum);
-                            await provider.send("eth_requestAccounts", []);
-                        } else {
-                            alert('Trust Wallet is not installed. Please install it to continue.');
-                            return;
-                        }
-                        break;
-                        
-                    case 'brave':
-                        if (window.ethereum && window.ethereum.isBraveWallet) {
-                            provider = new ethers.providers.Web3Provider(window.ethereum);
-                            await provider.send("eth_requestAccounts", []);
-                        } else {
-                            alert('Brave Wallet is not available. Please use Brave browser or install the extension.');
-                            return;
-                        }
-                        break;
-                        
-                    case 'bybit':
-                        if (window.ethereum && window.ethereum.isBybit) {
-                            provider = new ethers.providers.Web3Provider(window.ethereum);
-                            await provider.send("eth_requestAccounts", []);
-                        } else {
-                            alert('Bybit Wallet is not installed. Please install it to continue.');
-                            return;
-                        }
-                        break;
-                        
-                    case 'bitget':
-                        if (window.ethereum && window.ethereum.isBitKeep) {
-                            provider = new ethers.providers.Web3Provider(window.ethereum);
-                            await provider.send("eth_requestAccounts", []);
-                        } else {
-                            alert('Bitget Wallet is not installed. Please install it to continue.');
-                            return;
-                        }
-                        break;
-                        
-                    default:
-                        alert('Unknown wallet type');
-                        return;
-                }
-                
-                // Get signer and address
-                const signer = provider.getSigner();
-                const address = await signer.getAddress();
-                
-                // Update app state
-                appState.connectedWallet = walletType;
-                appState.connectedAddress = address;
-                
-                // Update UI
-                updateWalletUI();
-                
-                // Check if user is admin
-                checkAdminStatus();
-                
-                // Save state
-                saveState();
-                
-            } catch (error) {
-                console.error('Error connecting wallet:', error);
-                alert('Failed to connect wallet. Please try again.');
-            }
-        }
-
-        // Update wallet UI
-        function updateWalletUI() {
-            const walletBtn = document.getElementById('connectWallet');
-            if (appState.connectedAddress) {
-                walletBtn.innerHTML = `<i class="bi bi-wallet2"></i> ${appState.connectedAddress.substring(0, 6)}...${appState.connectedAddress.substring(appState.connectedAddress.length - 4)}`;
-                walletBtn.classList.add('pulse');
-            }
-        }
-
-        // Update network indicator
-        function updateNetworkIndicator() {
-            const networkIndicator = document.querySelector('.network-indicator');
-            if (networkIndicator) {
-                networkIndicator.className = `network-indicator ${appState.currentNetwork}`;
-                networkIndicator.textContent = appState.currentNetwork === 'mainnet' ? 'Mainnet' : 'Testnet';
-            }
-        }
-
-        // Initialize network toggle
-        function initNetworkToggle() {
-            document.querySelector('.network-toggle-btn.testnet').classList.toggle('active', appState.currentNetwork === 'testnet');
-            document.querySelector('.network-toggle-btn.mainnet').classList.toggle('active', appState.currentNetwork === 'mainnet');
-        }
-
-        // Show admin panel
-        function showAdminPanel() {
-            // Check if admin link already exists
-            if (!document.querySelector('.navbar-nav .nav-link[href="#admin"]')) {
-                const adminNavItem = document.createElement('li');
-                adminNavItem.className = 'nav-item';
-                adminNavItem.innerHTML = `<a class="nav-link" href="#admin">Admin</a>`;
-                document.querySelector('.navbar-nav').appendChild(adminNavItem);
-            }
-            
-            document.getElementById('admin').style.display = 'block';
-            updateAdminTable();
-        }
-
-        // Update admin table
-        function updateAdminTable() {
-            const adminTableBody = document.getElementById('adminTableBody');
-            adminTableBody.innerHTML = '';
-            
-            for (const [address, admin] of Object.entries(appState.admins)) {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${address}</td>
-                    <td>${admin.username}</td>
-                    <td>
-                        <button class="btn btn-sm btn-warning" onclick="resetAdminPassword('${address}')">Reset Password</button>
-                        <button class="btn btn-sm btn-danger" onclick="removeAdmin('${address}')">Remove</button>
-                    </td>
-                `;
-                adminTableBody.appendChild(row);
-            }
-        }
-
-        // Reset admin password
-        function resetAdminPassword(address) {
-            if (confirm(`Are you sure you want to reset the password for admin at ${address}?`)) {
-                const newPassword = prompt('Enter new password:');
-                if (newPassword) {
-                    appState.admins[address].password = newPassword;
-                    saveState();
-                    alert('Password reset successfully');
-                }
-            }
-        }
-
-        // Remove admin
-        function removeAdmin(address) {
-            if (confirm(`Are you sure you want to remove admin at ${address}?`)) {
-                delete appState.admins[address];
-                saveState();
-                updateAdminTable();
-                
-                // If removing current admin, logout
-                if (address === appState.connectedAddress) {
-                    document.getElementById('adminLogout').click();
-                }
-                
-                alert('Admin removed successfully');
-            }
-        }
-
-        // Countdown timer for launchpad
-        function updateTimer() {
-            const timer1 = document.getElementById('timer1');
-            if (timer1) {
-                // This would normally calculate from a real end date
-                // For demo purposes, we'll just decrement the timer
-                const timeString = timer1.textContent;
-                const parts = timeString.match(/(\d+)d (\d+)h (\d+)m (\d+)s/);
-                if (parts) {
-                    let days = parseInt(parts[1]);
-                    let hours = parseInt(parts[2]);
-                    let minutes = parseInt(parts[3]);
-                    let seconds = parseInt(parts[4]);
-                    
-                    seconds--;
-                    if (seconds < 0) {
-                        seconds = 59;
-                        minutes--;
-                        if (minutes < 0) {
-                            minutes = 59;
-                            hours--;
-                            if (hours < 0) {
-                                hours = 23;
-                                days--;
-                                if (days < 0) {
-                                    days = 0;
-                                    hours = 0;
-                                    minutes = 0;
-                                    seconds = 0;
-                                }
-                            }
-                        }
-                    }
-                    
-                    timer1.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s`;
-                }
-            }
-        }
-        
-        // Update timer every second
-        setInterval(updateTimer, 1000);
-    </script>
+    // -------------------------
+    // ON LOAD
+    // -------------------------
+    window.addEventListener("DOMContentLoaded", () => {
+      setupNetworkToggle();
+      renderItems();
+    });
+  </script>
 </body>
 </html>
